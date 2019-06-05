@@ -8,8 +8,6 @@
     desktop (1280x1024) and a default window for the STOPlet to run in (1024x768)
 --]]
 
-package.path = "../?.lua;"..package.path;
-
 local DeskTopper = require("DeskTopper")
 local vkeys = require("vkeys")
 

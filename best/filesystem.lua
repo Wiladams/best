@@ -5,7 +5,7 @@ local bit = require("bit");
 local band, bor = bit.band, bit.bor;
 
 local win32 = require("win32")
-local Collections = require("Collections");
+local Collections = require("collections");
 local unicode = require("unicode_util")
 
 

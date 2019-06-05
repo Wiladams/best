@@ -1,0 +1,4 @@
+.vscode
+build/bestdesk.exp
+build/bestdesk.lib
+build/bin/bestdesk.exe
