@@ -22,7 +22,6 @@ end
 local app = require(appname)
 
 local function handleKeyEvent(event)
-    --print(string.format("0x%x",event.keyCode))
     if event.keyCode == vkeys.VK_ESCAPE then
         halt()
     end

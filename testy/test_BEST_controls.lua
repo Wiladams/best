@@ -1,10 +1,11 @@
 package.path = "../?.lua;"..package.path;
 
-local winman = require("WinMan")
+local DeskTopper = require("DeskTopper")
 
-local RGBExplorer = require("RGBExplorer")
-local AngleIndicator = require("AngleIndicator")
-local AnalogClock = require("AnalogClock")
+
+local RGBExplorer = require("examples.RGBExplorer")
+local AngleIndicator = require("examples.AngleIndicator")
+local AnalogClock = require("examples.AnalogClock")
 
 local radians = math.rad
 
@@ -37,12 +38,6 @@ local function app(params)
 
     periodic(1000/10, drawproc)
 
---[[
-    while true do 
-        win1:draw()
-        yield()
-    end
---]]
 end
 
 
@@ -50,4 +45,4 @@ local function startup()
     spawn(app, {frame = {x=4, y=4, width=1024, height=768}})
 end
 
-winman {width = desktopWidth, height=desktopHeight, startup = startup, frameRate=30}
+DeskTopper {width = desktopWidth, height=desktopHeight, startup = startup, frameRate=30}

@@ -8,15 +8,10 @@
     desktop (1280x1024) and a default window for the STOPlet to run in (1024x768)
 --]]
 
-package.path = "../?.lua;"..package.path;
-
-local winman = require("WinMan")
+local DeskTopper = require("DeskTopper")
 
 local appname = arg[1]
-local makeVideo = false;
-if arg[2] == "video" then
-    makeVideo = true;
-end
+
 
 if not appname then 
     print("you must specify a STOPlet name")
@@ -31,4 +26,4 @@ local function startup()
     spawn(app, {frame = {x=0, y=0, width=desktopWidth, height=desktopHeight}})
 end
 
-winman {width = desktopWidth, height=desktopHeight, startup = startup, frameRate=30}
+DeskTopper {startup = startup, frameRate=30}
