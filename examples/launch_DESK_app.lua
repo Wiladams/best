@@ -9,9 +9,9 @@
 --]]
 
 local DeskTopper = require("DeskTopper")
+local vkeys = require("vkeys")
 
 local appname = arg[1]
-
 
 if not appname then 
     print("you must specify a STOPlet name")
@@ -19,11 +19,18 @@ if not appname then
 end
 
 local app = require(appname)
-local desktopWidth = 1920
-local desktopHeight = 1920
 
-local function startup()
-    spawn(app, {frame = {x=0, y=0, width=desktopWidth, height=desktopHeight}})
+local function handleKeyEvent(event)
+    if event.keyCode == vkeys.VK_ESCAPE then
+        halt()
+    end
+end
+
+
+local function startup(params)
+    spawn(app, params)
+
+    on("gap_keytyped", handleKeyEvent)
 end
 
 DeskTopper {startup = startup, frameRate=30}

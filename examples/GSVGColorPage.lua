@@ -37,6 +37,14 @@ function GSVGColorDisplay.new(self, params)
     return obj;
 end
 
+function GSVGColorDisplay.getSize(self)
+    
+    local rows = (#svgcolors / 16) + 1
+    local columns = 16;
+
+    return {width = self.maxColumns * self.columnSize, height = rows*self.rowSize}
+end
+
 -- Needed to be a target of mouse events
 function GSVGColorDisplay.frameContains(self, x, y)
     return x >= self.frame.x and x < self.frame.x+self.frame.width and

@@ -4,36 +4,10 @@ local maths = require("maths")
 local map = maths.map
 local constrain = maths.constrain
 
+local MotionConstraint = require("MotionConstraint")
 
 
-local MotionConstraint = {}
-local MotionConstraint_mt = {
-    __index = MotionConstraint
-}
 
-function MotionConstraint.new(self, obj)
-    obj = obj or {}
-    obj.minX = obj.minX or 0;
-    obj.minY = obj.minY or 0;
-    obj.maxX = obj.maxX or 1;
-    obj.maxY = obj.maxY or 1;
-
-    setmetatable(obj, MotionConstraint_mt)
-    
-    return obj;
-end
-
-function MotionConstraint.tryChange(self, subject, change)
-    --print("tryChange: ", change.dx, change.dy)
-    local x = constrain(subject.x+change.dx, self.minX, self.maxX)
-    local y = constrain(subject.y+change.dy, self.minY, self.maxY)
-    --print("tryChange, 2.0: ", x, y)
-
-    local dx = x - subject.x;
-    local dy = y - subject.y;
-
-    return {dx = dx,dy = dy}
-end
 
 
 --[[
@@ -69,7 +43,7 @@ function Slider.new(self, obj)
     obj.dragging = false;
     obj.midline = yMidline;
     obj.lastPosition = {x = halfThumbWidth, y = yMidline};
-    obj.thumbRect = BLRoundRect(0,yMidline-halfThumbHeight,thumbWidth,thumbHeight,thumbRadius, thumbRadius)
+    obj.thumbRect = obj.thumbRect or BLRoundRect(0,yMidline-halfThumbHeight,thumbWidth,thumbHeight,thumbRadius, thumbRadius)
     obj.constraint = MotionConstraint:new({
         minX = 0, maxX = obj.frame.width-thumbWidth,
         minY = obj.thumbRect.y, maxY = obj.thumbRect.y})

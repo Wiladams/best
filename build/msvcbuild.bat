@@ -22,44 +22,50 @@
 @set LJDLLNAME=lua51.dll
 @set LJLIBNAME=bin/lua51.lib
 
+%LUAC% blend2d/blcontext.lua blcontext.obj
+%LUAC% blend2d/blend2d_ffi.lua blend2d_ffi.obj
+%LUAC% blend2d/blend2d.lua blend2d.obj
+
+@set BLEND2DLIB=blcontext.obj blend2d_ffi.obj blend2d.obj
+
 
 @rem The best core library
 %LUAC% ../best/BLDIBSection.lua BLDIBSection.obj
 %LUAC% ../best/blerror.lua blerror.obj
-%LUAC% ../best/CheckerGraphic.lua CheckerGraphic.obj
-%LUAC% ../best/CloseBox.lua CloseBox.obj
 %LUAC% ../best/collections.lua collections.obj
 %LUAC% ../best/coloring.lua coloring.obj
-%LUAC% ../best/ContextRecorder.lua ContextRecorder.obj
-%LUAC% ../best/Drawable.lua Drawable.obj
 %LUAC% ../best/DrawingContext.lua DrawingContext.obj
 %LUAC% ../best/enum.lua enum.obj
 %LUAC% ../best/filesystem.lua filesystem.obj
 %LUAC% ../best/FontMonger.lua FontMonger.obj
 %LUAC% ../best/functor.lua functor.obj
-%LUAC% ../best/GImage.lua GImage.obj
 %LUAC% ../best/Gradient.lua Gradient.obj
+%LUAC% ../best/maths.lua maths.obj
+%LUAC% ../best/scheduler.lua scheduler.obj
+%LUAC% ../best/spairs.lua spairs.obj
+%LUAC% ../best/unicode_util.lua unicode_util.obj
+%LUAC% ../best/vkeys.lua vkeys.obj
+%LUAC% ../best/win32.lua win32.obj
+@set BESTLIB=BLDIBSection.obj blerror.obj collections.obj coloring.obj ContextRecorder.obj DrawingContext.obj  enum.obj filesystem.obj FontMonger.obj functor.obj Gradient.obj maths.obj scheduler.obj spairs.obj unicode_util.obj vkeys.obj win32.obj
+
+@rem The BEST GUI Library
+%LUAC% ../best/CheckerGraphic.lua CheckerGraphic.obj
+%LUAC% ../best/CloseBox.lua CloseBox.obj
+%LUAC% ../best/ContextRecorder.lua ContextRecorder.obj
+%LUAC% ../best/Drawable.lua Drawable.obj
+%LUAC% ../best/GImage.lua GImage.obj
 %LUAC% ../best/Graphic.lua Graphic.obj
 %LUAC% ../best/GraphicGroup.lua GraphicGroup.obj
 %LUAC% ../best/GSVGPath.lua GSVGPath.obj
 %LUAC% ../best/guistyle.lua guistyle.obj
-%LUAC% ../best/maths.lua maths.obj
-%LUAC% ../best/scheduler.lua scheduler.obj
+%LUAC% ../best/MotionConstraint.lua MotionConstraint.obj
 %LUAC% ../best/slider.lua slider.obj
-%LUAC% ../best/spairs.lua spairs.obj
 %LUAC% ../best/TitleBar.lua TitleBar.obj
-%LUAC% ../best/unicode_util.lua unicode_util.obj
-%LUAC% ../best/vkeys.lua vkeys.obj
-%LUAC% ../best/win32.lua win32.obj
 %LUAC% ../best/Window.lua Window.obj
-@set BESTLIB=BLDIBSection.obj blerror.obj CheckerGraphic.obj CloseBox.obj collections.obj coloring.obj ContextRecorder.obj Drawable.obj DrawingContext.obj  enum.obj filesystem.obj FontMonger.obj functor.obj GImage.obj Gradient.obj Graphic.obj GraphicGroup.obj GSVGPath.obj guistyle.obj maths.obj scheduler.obj slider.obj spairs.obj TitleBar.obj unicode_util.obj vkeys.obj win32.obj Window.obj
-
-%LUAC% blend2d/blcontext.lua blcontext.obj
-%LUAC% blend2d/blend2d_ffi.lua blend2d_ffi.obj
-%LUAC% blend2d/blend2d.lua blend2d.obj
 
 
-@set BLEND2DLIB=blcontext.obj blend2d_ffi.obj blend2d.obj
+@set BESTGUILIB=CheckerGraphic.obj CloseBox.obj ContextRecorder.obj Drawable.obj  GImage.obj Graphic.obj GraphicGroup.obj GSVGPath.obj guistyle.obj MotionConstraint.obj slider.obj TitleBar.obj Window.obj
+
 
 @rem DeskTopper Specifics
 %LUAC% ../best/DeskTopper.lua DeskTopper.obj
@@ -76,7 +82,7 @@
 %LJCOMPILE% bestdesk.c
 @if errorlevel 1 goto :BAD
 
-%LJLINK% /out:bestdesk.exe %LJLIBNAME% bestdesk.obj %CLIBS% %BESTLIB% %BLEND2DLIB% %DESKTOPPERLIB%
+%LJLINK% /out:bestdesk.exe %LJLIBNAME% bestdesk.obj %CLIBS% %BESTLIB% %BESTGUILIB% %BLEND2DLIB% %DESKTOPPERLIB%
 @if errorlevel 1 goto :BAD
 if exist bestdesk.exe.manifest^
   %LJMT% -manifest bestdesk.exe.manifest -outputresource:bestdesk.exe

@@ -543,6 +543,43 @@ struct Smain {
   int status;
 };
 
+/*
+const char * startupScript = "            \
+local DeskTopper = require('DeskTopper')  \
+local vkeys = require('vkeys')            \
+\
+local appname = arg[1]                    \
+\
+if not appname then                       \
+    print('you must specify a app name')  \
+    return nil                            \
+end                                       \
+\
+local app = require(appname)              \
+\
+local function handleKeyEvent(event)      \
+    if event.keyCode == vkeys.VK_ESCAPE then  \
+        halt()                            \
+    end                                   \
+end                                       \
+\
+\
+local function startup(params)            \
+    spawn(app, params)                    \
+\
+    on('gap_keytyped', handleKeyEvent)    \
+end                                       \
+\
+DeskTopper {startup = startup, frameRate=30}";
+*/
+
+// This is the startup script we need to run
+// to get things going after the user script
+// has been loaded.
+const char * startupScript = "            \
+local DeskTopper = require('DeskTopper')  \
+DeskTopper {startup = startup, frameRate=30}";
+
 static int pmain(lua_State *L)
 {
   struct Smain *s = (struct Smain *)lua_touserdata(L, 1);
@@ -577,12 +614,19 @@ static int pmain(lua_State *L)
     if (s->status != 0) return 0;
   }
   if ((flags & FLAGS_VERSION)) print_version();
+
+
   s->status = runargs(L, argv, (script > 0) ? script : s->argc);
   if (s->status != 0) return 0;
   if (script) {
     s->status = handle_script(L, argv, script);
-    if (s->status != 0) return 0;
+    if (s->status != 0) 
+      return 0;
+
+    // run startup
+    dostring(L, startupScript, "=");
   }
+
   if ((flags & FLAGS_INTERACTIVE)) {
     print_jit_status(L);
     dotty(L);

@@ -1,15 +1,21 @@
 --[[
     This single file represents the guts of a desktop windowing environment
 
-    
+    By default, it will create a topmost window that spans the entire
+    current desktop.  You can control what is seen 'behind' the 
+    desktop by your choice of wallpaper.
+
+    If you select no wallpaper:  WMSetWallpaper(nil), then the only
+    thing you'll see on the desktop are the apps that you create,
+    otherwise, you'll see what's behind on the regular Windows desktop.
 
     Typical usage:
 
     -- This first line MUST come before any user code
-    require("WinMan")
+    require("DeskTopper")
 
     -- This MUST be the last line of the user code
-    go {width=700, height=400}
+    DeskTopper {startup = startupFunctioin}
 
 
     This will essentially create a desktop environment ready for windows and other 
@@ -153,6 +159,10 @@ end
 
 function WMGetDesktopDpi()
     return gDpi;
+end
+
+function WMGetDesktopSize()
+    return {width = gScreenX, height = gScreenY}
 end
 
 function WMSetForegroundWindow(win)
@@ -997,7 +1007,7 @@ local function main(params)
     yield();
 
     if params.startup then
-        spawn(params.startup)
+        spawn(params.startup, params)
     end
     --yield()
 

@@ -207,7 +207,7 @@ local DrawingContext_mt = {
 
 
 function DrawingContext.new(self, obj)
-    print("DrawingContext.new")
+    --print("DrawingContext.new")
     obj = obj or {}
 
     obj.fontMonger = obj.fontMonger or FontMonger:new()
@@ -238,7 +238,7 @@ function DrawingContext.new(self, obj)
     obj.DC:clearAll()
     setmetatable(obj, DrawingContext_mt)
 
-    obj:textFont("consolas", 'regular')
+    obj:textFont("segoe ui")
 
     return obj;
 end
