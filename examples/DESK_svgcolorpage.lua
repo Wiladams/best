@@ -1,4 +1,20 @@
+--[[
+    This is an example of a startup for bestdesk.exe
+    The general idea is, you want to specify how the desktop
+    looks upon starting the application.
 
+    So, this is part configuration, part app playground.  Really
+    there should be specifically named desktop configurations, and 
+    all the app specifics should be in "APP_specific.lua" files, which 
+    the configuration simply loads.
+
+    Of particular note, there MUST be a globaly 'startup()' function.
+    This is what bestdesk.exe is expecting to see, and will use it 
+    as a startup.  None of the BEST environment is available to the 
+    configuration until this startup function has been called.
+
+    In particular, none of the scheduler functions are available.
+]]
 
 local Slider = require("slider")
 local BView = require("BView")
@@ -85,7 +101,7 @@ local function main()
         --columns = 64,
         --rows = 64
     })
-    WMSetWallpaper(wp)
+    --WMSetWallpaper(wp)
 
     app()
 end

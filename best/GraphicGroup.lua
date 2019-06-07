@@ -193,6 +193,13 @@ function GraphicGroup.mouseEvent(self, event)
 
     local child = self:graphicAt(event.x, event.y)
 
+    -- short circuit
+    -- if the mouse is gragging, then keep sending events
+    -- to the last know good child
+    if event.isDragging and self.lastMouseChild and self.lastMouseChild.mouseEvent then
+        return self.lastMouseChild:mouseEvent(event)
+    end
+
     if child ~= self.lastMouseChild then
         if self.lastMouseChild and self.lastMouseChild.mouseExit then
             self.lastMouseChild:mouseExit(event)
