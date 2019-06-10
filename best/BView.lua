@@ -37,9 +37,11 @@ end
 
 
 function BView.calcTransform(self, px, py)
-    local pageSize = self.page:getSize()
+    local pageSize = self.page:getPreferredSize()
     local x = map(px, 0,1, 0, max(0, pageSize.width - self.frame.width))
     local y = map(py, 0,1, 0, max(0, pageSize.height - self.frame.height))
+
+    --print("BView.calcTransform: ", x, y)
 
     return x, y
 end
@@ -49,10 +51,26 @@ function BView.setPosition(self, px, py)
     self.Tx, self.Ty = self:calcTransform(px, py)
 end
 
-function BView.handlePositionChange(self, slider)
-    --print("BView.handlePositionChange: ", slider)
-    local xpos = slider:getPosition();
-    local ypos = 0
+function BView.handleVerticalPositionChange(self, slider)
+    --print("BView.handleVerticalPositionChange: ", slider, slider:getPosition())
+
+    local pos = {x=0,y=0}
+    if slider then
+        pos = slider:getPosition()
+    end
+
+    self:setPosition(pos.x, pos.y)
+end
+
+function BView.handleHorizontalPositionChange(self, slider)
+    --print("BView.handleHorizontalPositionChange: ", slider)
+    local ypos = 0;
+    local xpos = 0;
+    
+    if slider then
+        xpos = slider:getPosition()
+    end
+
     self:setPosition(xpos, ypos)
 end
 

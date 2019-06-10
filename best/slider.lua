@@ -1,29 +1,27 @@
+--[[
+    A slider is a graphic that provides for some constrained motion.  The constraint
+    is expressed in the form of a MotionConstraint object.
+
+    There is a 'track', which represents the motion a 'thumb' will travel over
+    during user interaction.  The track and constraint go hand in hand, as the track
+    is a representation of the MotionConstraint.
+
+    The constraint can express two dimensions and not just one.
+]]
 local GraphicGroup = require("GraphicGroup")
 local maths = require("maths")
 
 local map = maths.map
 local constrain = maths.constrain
 
-local MotionConstraint = require("MotionConstraint")
-
-
-
-
 
 --[[
     Basic slider class
 ]]
-local thumbWidth = 40
-local halfThumbWidth = thumbWidth/2
 
-local thumbHeight = 18
-local halfThumbHeight = thumbHeight/2
-local thumbRadius = 4;
-
-local trackThickness = 4
-
-
-local Slider = {}
+local Slider = {
+    trackThickness = 4;
+}
 setmetatable(Slider, {
     __index = GraphicGroup;
 })
@@ -34,19 +32,10 @@ local Slider_mt = {
 function Slider.new(self, obj)
     obj = GraphicGroup:new(obj)
 
-    local yMidline = obj.frame.height/2
-
-    obj.bgColor = obj.bgColor or color(0xC0, 0xC0, 0xff)
     obj.lowValue = obj.lowValue or 0
     obj.highValue = obj.highValue or 255
-    obj.position = obj.position or 0
+    obj.position = obj.position or {x=0,y=0};
     obj.dragging = false;
-    obj.midline = yMidline;
-    obj.lastPosition = {x = halfThumbWidth, y = yMidline};
-    obj.thumbRect = obj.thumbRect or BLRoundRect(0,yMidline-halfThumbHeight,thumbWidth,thumbHeight,thumbRadius, thumbRadius)
-    obj.constraint = MotionConstraint:new({
-        minX = 0, maxX = obj.frame.width-thumbWidth,
-        minY = obj.thumbRect.y, maxY = obj.thumbRect.y})
 
     setmetatable(obj,Slider_mt)
 
@@ -55,59 +44,65 @@ function Slider.new(self, obj)
     return obj
 end
 
-function Slider.draw(self, ctx)
-    -- draw horizontal line mid height
-    ctx:strokeWidth(trackThickness)
-    ctx:stroke(120)
-    ctx:line(halfThumbWidth,self.midline, self.frame.width-halfThumbWidth, self.midline)
 
----[[
+function Slider.drawBackground(self, ctx)
+    -- draw line between endpoints
+    ctx:strokeWidth(Slider.trackThickness)
+    ctx:stroke(120)
+    ctx:line(self.startPoint.x, self.startPoint.y, self.endPoint.x, self.endPoint.y)
+
     -- draw a couple of circles at the ends
     ctx:noStroke()
     ctx:fill(10)
-    ctx:circle(halfThumbWidth, self.midline, trackThickness/2+2)
-    ctx:circle(self.frame.width-halfThumbWidth, self.frame.height/2, 3)
---]]
+    ctx:circle(self.startPoint.x, self.startPoint.y, (Slider.trackThickness/2)+2)
+    ctx:circle(self.endPoint.x, self.endPoint.y, (Slider.trackThickness/2)+2)
+end
 
-    -- draw the thumb
-    -- a lozinger rounded rect
-
-    ctx:fill(self.bgColor)
-    ctx:fillRoundRect(self.thumbRect)
+function Slider.drawForeground(self, ctx)
+    self.thumb:draw(ctx)
 end
 
 --[[
     Returns a number in range  [0..1]
 ]]
 function Slider.getPosition(self)
-    return map(self.thumbRect.x, self.constraint.minX, self.constraint.maxX, 0, 1)
+    return self.position;
+    --return map(self.thumb.frame.x, self.constraint.minX, self.constraint.maxX, 0, 1)
 end
 
 function Slider.setPosition(self, pos)
-    self.thumbRect.x = map(pos, 0,1, self.constraint.minX, self.constraint.maxX)
+    self.position.x = constrain(pos.x, 0,1)
+    self.position.y = constrain(pos.y, 0,1)
+    
+    local locY = map(pos.y, 0,1, self.constraint.minY, self.constraint.maxY)
+    local locX = map(pos.x, 0,1, self.constraint.minX, self.constraint.maxX)
+  
+
+    self.thumb:moveTo(locX, locY)
+
+    self.lastLocation = {x = self.thumb.frame.x, y = self.thumb.frame.y}
 end
 
 function Slider.getValue(self)
     return map(self:getPosition(), 0, 1, self.lowValue, self.highValue);
 end
 
-function Slider.changeThumbPosition(self, change)
-    local movement = self.constraint:tryChange(self.thumbRect, change)
+function Slider.changeThumbLocation(self, change)
+    local movement = self.constraint:tryChange(self.thumb.frame, change)
 --print("movement: ", movement.dx, movement.dy)
 
-    self.thumbRect.x = self.thumbRect.x + movement.dx;
-    self.thumbRect.y = self.thumbRect.y + movement.dy
+    self.thumb:moveBy(movement.dx, movement.dy)
     
+    local position = self.constraint:calcPosition(self.thumb.frame)
+    self.position = position;
+
     -- tell anyone who's interested that something has changed
     signalAll(self, self, "changeposition")
 end
 
 function Slider.mouseDown(self, event)
     self.dragging = true;
-    self.lastPosition = {x=event.x, y=event.y};
-    -- local change = {dx = centrx - event.x, dy = centery.event.y}
-    --self:changeThumbPosition({dy=0,dx=0})
-    --self:setThumbPosition()
+    self.lastLocation = {x=event.x, y=event.y};
 end
 
 function Slider.mouseUp(self, event)
@@ -116,14 +111,15 @@ end
 
 function Slider.mouseMove(self, event)
     --print("Slider.mouseMove: ", event.x, event.y, self.dragging)
-    local change = {
-        dy = event.y - self.lastPosition.y;
-        dx = event.x - self.lastPosition.x;    
-    }
+
     if self.dragging then 
-        self:changeThumbPosition(change)
+        local change = {
+            dy = event.y - self.lastLocation.y;
+            dx = event.x - self.lastLocation.x;    
+        }
+        self:changeThumbLocation(change)
     end
-    self.lastPosition = {x = event.x, y = event.y}
+    self.lastLocation = {x = event.x, y = event.y}
 end
 
 return Slider

@@ -35,10 +35,17 @@ end
 function exports.map(x, olow, ohigh, rlow, rhigh, withinBounds)
     rlow = rlow or olow
     rhigh = rhigh or ohigh
-    local value = rlow + (x-olow)*((rhigh-rlow)/(ohigh-olow))
+
+    local inrange = ohigh - olow
+    local outrange = rhigh - rlow
+    if outrange == 0 then
+        return rlow
+    end
+    
+    local value = rlow + (x-olow)*((outrange)/inrange)
 
     if withinBounds then
-        value = constrain(value, rlow, rhigh)
+        value = exports.constrain(value, rlow, rhigh)
     end
 
     return value;

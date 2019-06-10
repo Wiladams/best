@@ -114,12 +114,16 @@ local FontMonger_mt = {
 
 
 function FontMonger.new(self, obj)
+    obj = obj or {
+        typefacedb = loadFontFaces(FontMonger.systemFontDirectory, passTTF)
+    }
+
+    obj.typefacedb = obj.typefacedb or loadFontFaces(FontMonger.systemFontDirectory, passTTF)
+    obj.dpi = obj.dpi or 96    -- start with dpi == px measurement
+
     --local stime = runningTime()
-    obj = obj or loadFontFaces(FontMonger.systemFontDirectory, passTTF)
     --local duration = runningTime() - stime
     --print("FontMonger, loadFontFaces: ", duration)
-
-    obj.dpi = 96
 
     setmetatable(obj, FontMonger_mt)
 
@@ -164,7 +168,7 @@ end
 -- loaded
 function FontMonger.families(self)
     local function visitor()
-        for family, v in pairs(self) do
+        for family, v in pairs(self.typefacedb) do
             if type(family) == "string" and type(v) == "table" then
                 coroutine.yield(family, v)
             end
@@ -176,7 +180,8 @@ end
 
 function FontMonger.faces(self)
     local function visitor()
-        for family,v in pairs(self) do
+        for family,v in pairs(self.typefacedb) do
+            --print("v:", v)
             for subfamily, facedata in pairs(v) do
                 coroutine.yield(family, subfamily, facedata)
             end
@@ -191,7 +196,7 @@ end
 -- is not available.  At least the family must be the same though
 function FontMonger.getFace(self, family, subfamily, nearest)
     subfamily = subfamily or "regular"
-    local famslot = self[family:lower()]
+    local famslot = self.typefacedb[family:lower()]
     if not famslot then
         return nil, "unknown family: "..family
     end
@@ -212,7 +217,7 @@ function FontMonger.getFont(self, family, subfamily, size)
     local fontSize = size / self.unitsPerInch * self.dpi
 
     -- try to find the font face
-    local famslot = self[family]
+    local famslot = self.typefacedb[family]
     if not famslot then
         return nil, "font family not found: "..family
     end

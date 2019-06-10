@@ -13,8 +13,8 @@ function MotionConstraint.new(self, obj)
     obj = obj or {}
     obj.minX = obj.minX or 0;
     obj.minY = obj.minY or 0;
-    obj.maxX = obj.maxX or 1;
-    obj.maxY = obj.maxY or 1;
+    obj.maxX = obj.maxX or 0;
+    obj.maxY = obj.maxY or 0;
 
     setmetatable(obj, MotionConstraint_mt)
     
@@ -31,6 +31,15 @@ function MotionConstraint.tryChange(self, subject, change)
     local dy = y - subject.y;
 
     return {dx = dx,dy = dy}
+end
+
+function MotionConstraint.calcPosition(self, frame)
+
+    local xpos = map(frame.x, self.minX, self.maxX, 0,1, true)
+    local ypos = map(frame.y, self.minY, self.maxY, 0,1, true)
+--print("MotionConstraint.calcPosition: ", xpos, ypos, frame.x, self.minX, self.maxX)
+
+    return {x = xpos, y = ypos}
 end
 
 return MotionConstraint

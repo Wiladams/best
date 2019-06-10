@@ -49,6 +49,7 @@
 @set BESTLIB=BLDIBSection.obj blerror.obj collections.obj coloring.obj ContextRecorder.obj DrawingContext.obj  enum.obj filesystem.obj FontMonger.obj functor.obj Gradient.obj maths.obj scheduler.obj spairs.obj unicode_util.obj vkeys.obj win32.obj
 
 @rem The BEST GUI Library
+%LUAC% ../best/BView.lua BView.obj
 %LUAC% ../best/CheckerGraphic.lua CheckerGraphic.obj
 %LUAC% ../best/CloseBox.lua CloseBox.obj
 %LUAC% ../best/ContextRecorder.lua ContextRecorder.obj
@@ -60,11 +61,12 @@
 %LUAC% ../best/guistyle.lua guistyle.obj
 %LUAC% ../best/MotionConstraint.lua MotionConstraint.obj
 %LUAC% ../best/slider.lua slider.obj
+%LUAC% ../best/SliderThumb.lua SliderThumb.obj
 %LUAC% ../best/TitleBar.lua TitleBar.obj
 %LUAC% ../best/Window.lua Window.obj
 
 
-@set BESTGUILIB=CheckerGraphic.obj CloseBox.obj ContextRecorder.obj Drawable.obj  GImage.obj Graphic.obj GraphicGroup.obj GSVGPath.obj guistyle.obj MotionConstraint.obj slider.obj TitleBar.obj Window.obj
+@set BESTGUILIB=BView.obj CheckerGraphic.obj CloseBox.obj ContextRecorder.obj Drawable.obj  GImage.obj Graphic.obj GraphicGroup.obj GSVGPath.obj guistyle.obj MotionConstraint.obj slider.obj SliderThumb.obj TitleBar.obj Window.obj
 
 
 @rem DeskTopper Specifics
