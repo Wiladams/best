@@ -17,6 +17,7 @@ function SliderThumb.new(self, obj)
     }
     obj.radius = obj.radius or SliderThumb.thumbRadius
     obj.thumbColor = obj.thumbColor or color(0xC0)
+    obj.shape = BLRoundRect(0, 0, obj.frame.width, obj.frame.height, obj.radius, obj.radius);
 
     setmetatable(obj, SliderThumb_mt)
 
@@ -26,7 +27,7 @@ end
 -- a lozinger rounded rect
 function SliderThumb.draw(self, ctx)
     ctx:fill(self.thumbColor)
-    ctx:fillRoundRect(BLRoundRect(self.frame.x, self.frame.y, self.frame.width, self.frame.height, self.radius, self.radius))
+    ctx:fillRoundRect(self.shape)
 end
 
 function SliderThumb.moveBy(self, dx, dy)

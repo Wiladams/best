@@ -39,6 +39,7 @@ function Slider.new(self, obj)
 
     setmetatable(obj,Slider_mt)
 
+    obj:add(obj.thumb)
     obj:setPosition(obj.position)
 
     return obj
@@ -58,9 +59,11 @@ function Slider.drawBackground(self, ctx)
     ctx:circle(self.endPoint.x, self.endPoint.y, (Slider.trackThickness/2)+2)
 end
 
+--[[
 function Slider.drawForeground(self, ctx)
     self.thumb:draw(ctx)
 end
+--]]
 
 --[[
     Returns a number in range  [0..1]

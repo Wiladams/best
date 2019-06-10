@@ -24,7 +24,7 @@ local ffi = require("ffi")
 local C = ffi.C 
 
 
-local blapi = require("blend2d.blend2d")
+local blapi = require("blend2d")
 
 local enum = require("enum")
 local maths = require("maths")
@@ -1059,30 +1059,21 @@ end
     Images
 ]]
 function DrawingContext.blit (self, img, x, y)
+    x = x or 0
+    y = y or 0
     return self.DC:blitImage(BLPoint(x,y), img)
---[[
-    local imgArea = BLRectI(0,0,img:size().w, img:size().h)
-    local bResult = blapi.blContextBlitImageD(self.DC, BLPoint(x,y), img, imgArea) ;
-    
-    if bResult == C.BL_SUCCESS then
-        return self;
-    end
-
-    return false, bResult
---]]
 end
 
 function DrawingContext.stretchBlt (self, dstRect, img, imgArea)
-    return self.DC:blitScaledImage(dstRect, img, imgArea)
---[[
-    local bResult = blapi.blContextBlitScaledImageD(self.DC, dstRect, img, imgArea) ;
-
-    if bResult == C.BL_SUCCESS then
-        return self;
-    end
-
-    return false, bResult
+    --print("DrawingContext.stretchBlt: ", tostring(dstRect), img, tostring(imgArea))
+---0[[
+    local blctx = self.DC;
+    local bResult = blctx.impl.virt.blitScaledImageD(blctx.impl, 
+        dstRect, 
+        img, 
+        imgArea);
 --]]
+    --return self.DC:blitScaledImage(dstRect, img, imgArea)
 end
 
 return DrawingContext

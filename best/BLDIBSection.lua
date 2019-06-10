@@ -19,7 +19,7 @@ local bnot = bit.bnot;
 local band, bor = bit.band, bit.bor
 local lshift, rshift = bit.lshift, bit.rshift
     
-require("blend2d.blend2d")
+require("blend2d")
     
 local function GetAlignedByteCount(width, bitsperpixel, alignment)
     local bytesperpixel = bitsperpixel / 8;

@@ -10,3 +10,6 @@ TODO
 Create two .exe files
 bdesk - BEST desktop environment
 bwin  - BEST window environment
+
+Reference Images
+http://sipi.usc.edu/database/database.php?volume=misc&image=18#top

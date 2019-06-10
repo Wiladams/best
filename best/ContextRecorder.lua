@@ -1,4 +1,10 @@
 
+--[[
+    Record a DrawingContext
+
+    Then, to generate video
+    ffmpeg -framerate 24 -i Project%03d.png Project.mp4
+]]
 local functor = require("functor")
 
 local ContextRecorder = {}
@@ -29,7 +35,7 @@ function ContextRecorder.saveFrame(self)
         end
     end
 
-    local frameName = string.format("%s%06d", self.basename, self.currentFrame)
+    local frameName = string.format("%s%06d.bmp", self.basename, self.currentFrame)
     BLImageCodec("BMP"):writeImageToFile(self.drawingContext:getReadyBuffer(), frameName)    
     
     self.currentFrame = self.currentFrame + 1;
