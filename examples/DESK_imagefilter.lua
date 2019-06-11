@@ -1,4 +1,4 @@
---package.path = "../?.lua;"..package.path;
+package.path = "../best/?.lua;"..package.path;
 
 --[[
     This is an example of a startup for bestdesk.exe

@@ -1,4 +1,5 @@
-package.path = "../?.lua;"..package.path;
+--package.path = "../?.lua;"..package.path;
+package.path = "../best/?.lua;../build/blend2d/?.lua;../examples/?.lua;"..package.path;
 
 local DeskTopper = require("DeskTopper")
 
