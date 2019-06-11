@@ -1,9 +1,25 @@
+--[[
+    The general purpose of this file is to turn various of the Windows 'events' into a 
+    nice consumable lua event.  So, we do message parsing, going from some specific WM_XXX
+    to something much nicer.
+
+    This is primarily for keyboard and mouse, but it also handles
+    Joystick
+    Touch
+    Gesture
+    RawInput (including USB HID)
+]]
 local ffi = require("ffi")
 local C = ffi.C 
 
 local bit = require("bit")
 local band, bor = bit.band, bit.bor
 local rshift, lshift = bit.rshift, bit.lshift;
+
+-- BUGBUG, these should be 'g'
+wmFocusWindow = nil
+wmLastMouseWindow = nil;
+
 
 local exports = {}
 
@@ -71,6 +87,9 @@ end
     One key operation is to turn the mouse eventfrom 'screen' coordinates
     to window coordinates.  That way the window can deal with the mouse
     actvity in their own coordinate space.
+
+    BUGBUG - All this switching of which window is topmost, focus, etc
+    should be handled elsewhere by a mouseEvent behavior thing.
 --]]
 function exports.MouseActivity(hwnd, msg, wparam, lparam)
     local res = 0;

@@ -1,19 +1,17 @@
 
 local Window = require("Window")
 
+appContext = nil;
 
-local appContext
-
-local gSystemDpi = nil;
-local gScreenX = nil;
-local gScreenY = nil;
-local gWallpaper;
+gSystemDpi = nil;
+gDesktopDpi = nil;
+gScreenX = nil;
+gScreenY = nil;
+gWallpaper = nil;
 
 
 -- list of windows in environment
 local windowGroup = {}
-local wmFocusWindow = nil;
-local wmLastMouseWindow = nil;
 
 --[[
     System calls
@@ -45,6 +43,14 @@ end
 
 function WMGetSystemDpi()
     return gSystemDpi;
+end
+
+function WMGetSystemSize()
+    return {width = gScreenX, height = gScreenY}
+end
+
+function WMGetDesktopDpi()
+    return gDesktopDpi;
 end
 
 function WMGetDesktopSize()

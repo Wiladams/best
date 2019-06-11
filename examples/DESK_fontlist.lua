@@ -105,7 +105,7 @@ local function app()
         drawingContext = win1.drawingContext;
         basename = "output\\fontlist";
     })
-    recorder:record();
+    --recorder:record();
 
     periodic(1000/20, drawproc)
 end

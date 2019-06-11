@@ -40,9 +40,8 @@ local appImage = nil;
 local appWindowHandle = nil;
 local appWindowDC = nil;
 
-gDesktopDpi = nil;
-gScreenX = nil;
-gScreenY = nil;
+
+
 
 local windowGroup = {}
 
@@ -309,7 +308,7 @@ local function init(params)
     -- the Managed window UI Surface
     appWindowHandle,err = createWin32Window(params)
     appWindowDC = C.GetDC(appWindowHandle)
-    gDpi = C.GetDpiForWindow (appWindowHandle);
+    gDesktopDpi = C.GetDpiForWindow (appWindowHandle);
 
 
     local bResult = C.ShowWindow(appWindowHandle, C.SW_SHOW);
