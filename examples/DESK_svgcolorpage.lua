@@ -109,5 +109,3 @@ end
 function startup()
     spawn(main)
 end
-
-return main

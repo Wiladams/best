@@ -109,8 +109,8 @@ local function composeFrame()
     -- Clear the app context so we start with a clean slate
     appContext:clear()
 
-    if appBackground then
-        appBackground:draw(appContext)
+    if gWallpaper then
+        gWallpaper:draw(appContext)
     end
 
     -- iterate through the windows

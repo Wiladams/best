@@ -25,7 +25,7 @@ end
 
 function SpiroGraphic:draw(ctxt)
     ctxt:stroke(255, 0,0)
-    ctxt:setStrokeWidth(1)
+    ctxt:strokeWidth(1)
     local x = 0;
     local y = 0;
 
