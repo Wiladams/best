@@ -19,10 +19,11 @@ local function VerticalSlider(view)
     -- create a slider
     local vSliderThumb = SliderThumb:new({
         frame = {x=0,y=0,width=24,height=60};
+        thumbColor = 0x70;
     })
 
 
-    local vSliderFrame = {x=view.frame.x+view.frame.width + 4, y=view.frame.y, width=vSliderThumb.frame.width, height=view.frame.height}
+    local vSliderFrame = {x=view.frame.x+view.frame.width + 8, y=view.frame.y, width=vSliderThumb.frame.width, height=view.frame.height}
     local vSliderConstraint = MotionConstraint:new({
         minX = 0, maxX = 0,
         minY = 0, maxY = vSliderFrame.height-vSliderThumb.frame.height})
@@ -51,8 +52,17 @@ local function app()
     local win1 = WMCreateWindow(winFrame)
 
     function win1.drawBackground(self, ctx)
-        ctx:fill(255)
+        ctx:fill(0xC3)
         ctx:rect(0,0,self.frame.width, self.frame.height)
+
+        -- draw a sunken line at 580
+        ctx:strokeWidth(2)
+        ctx:stroke(0x7f)
+        ctx:line(4,580,self.frame.width-4, 580)
+        
+        ctx:stroke(0xF3)
+        ctx:line(4, 582, self.frame.width-4, 582)
+        ctx:line(self.frame.width-4, 580, self.frame.width-4,582)
     end
 
     -- Create filter views

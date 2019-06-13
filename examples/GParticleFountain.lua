@@ -70,13 +70,11 @@ function Particle.draw(self, ctx)
         return false
     end
     
-    --ctx:stroke(200, self.lifespan);
-    ctx:noStroke()
     --ctx:strokeWidth(1);
     self.color.a = self.lifespan
     ctx:fill(self.color);
-    --ctx:ellipse(self.position.x, self.position.y, 12, 12);
-    ctx:rect(self.position.x, self.position.y, 12, 12)
+    ctx:circle(self.position.x, self.position.y, 6)
+    --ctx:rect(self.position.x, self.position.y, 12, 12)
 end
 
 -- Is the particle still useful?
@@ -129,6 +127,8 @@ end
 
 function GParticleFountain.draw(self, ctx)
   --print("GParticleFountain.draw, 1.0: ", #self.particles)
+  
+  ctx:noStroke()
 
   for particle in self.particles:entries() do
     particle:draw(ctx)

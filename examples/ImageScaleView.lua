@@ -39,7 +39,7 @@ function ImageScaleView.new(self, obj)
     obj.filter = obj.filter or C.BL_IMAGE_SCALE_FILTER_NEAREST
     obj.filterName = BLImageScaleFilter[obj.filter]
 
-    print("ImageScaleView.frame: ", obj.frame.x, obj.frame.y, obj.frame.width, obj.frame.height)
+    --print("ImageScaleView.frame: ", obj.frame.x, obj.frame.y, obj.frame.width, obj.frame.height)
 
     -- Create two images which will receive the smaller, and larger 
     -- resampled images

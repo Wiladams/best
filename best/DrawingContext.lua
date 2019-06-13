@@ -208,11 +208,13 @@ local DrawingContext_mt = {
 
 function DrawingContext.new(self, obj)
     --print("DrawingContext.new")
-    obj = obj or {}
+    if not obj then return nil, "must specify at least width and height" end
 
+    obj.dpi = obj.dpi or 96
     obj.fontMonger = obj.fontMonger or FontMonger:new()
-    obj.fontMonger:setDpi(192)
+    obj.fontMonger:setDpi(obj.dpi)
     obj.BackingBuffer = obj.BackingBuffer or BLImage(obj.width, obj.height)
+    
     obj.DC = obj.DC or ffi.new("struct BLContextCore")
     local bResult = blapi.blContextInitAs(obj.DC, obj.BackingBuffer, nil)
     if bResult ~= C.BL_SUCCESS then
@@ -220,7 +222,6 @@ function DrawingContext.new(self, obj)
     end
 
     -- Initial State information
-    obj.StrokeWeight = 1;
 
     -- Typography
     obj.fontSize = 18;
@@ -816,26 +817,23 @@ end
 
 
 function DrawingContext.strokeCaps(self, strokeCap)
-	self.DC:setStrokeCaps(strokeCap) ;
+    return self.DC:setStrokeCaps(strokeCap) ;
 end
 
 function DrawingContext.strokeStartCap(self, cap)
-    self.DC:setStrokeStartCap(cap)
-    return self;
+    return self.DC:setStrokeStartCap(cap)
 end
 
 function DrawingContext.strokeEndCap(self, cap)
-    self.DC:setStrokeEndCap(cap)
-    return self;
+    return self.DC:setStrokeEndCap(cap)
 end
 
 function DrawingContext.strokeJoin(self, join)
-    self.DC:setStrokeJoin(join)
+    return self.DC:setStrokeJoin(join)
 end
 
 function DrawingContext.strokeWidth(self, weight)
-    self.StrokeWeight = weight;
-    self.DC:setStrokeWidth(weight);
+    return self.DC:setStrokeWidth(weight);
 end
 
 --[[
@@ -888,15 +886,21 @@ end
 
 function DrawingContext.textAlign(self, halign, valign)
 	self.TextHAlignment = halign or DrawingContext.constants.LEFT
-	self.TextVAlignment = valign or DrawingContext.constants.BASELINE
+    self.TextVAlignment = valign or DrawingContext.constants.BASELINE
+    
+    return true;
 end
 
 function DrawingContext.textLeading(self, leading)
-	self.TextLeading = leading
+    self.TextLeading = leading
+    
+    return true;
 end
 
 function DrawingContext.textMode(self, mode)
-	self.TextMode = mode
+    self.TextMode = mode
+    
+    return true;
 end
 
 function DrawingContext.calcTextPosition(self, txt, x, y)
@@ -917,19 +921,21 @@ function DrawingContext.calcTextPosition(self, txt, x, y)
 	elseif self.TextVAlignment == BASELINE then
 		y = y;
 	elseif self.TextVAlignment == BOTTOM then
-		y = y;	end
-	return x, y
+        y = y;	
+    end
+    
+    return x, y
 end
 
 function DrawingContext.text(self, txt, x, y)
 	local x, y = self:calcTextPosition(txt, x, y)
-	self.DC:fillTextUtf8(BLPoint(x,y), self.Font, txt, #txt)
+	return self.DC:fillTextUtf8(BLPoint(x,y), self.Font, txt, #txt)
 end
 
 function DrawingContext.textOutline(self, txt, x, y)
     local x, y = self:calcTextPosition(txt, x, y)
     --print("textOutline: ", x, y)
-    self.DC:strokeTextUtf8(BLPoint(x,y), self.Font, txt, #txt)
+    return self.DC:strokeTextUtf8(BLPoint(x,y), self.Font, txt, #txt)
 end
 
 
@@ -991,6 +997,9 @@ function DrawingContext.rect(self, a,b,c,d)
 	return true;
 end
 
+-- Our drawing is based on center and two radii
+-- so this routine needs to calculate those values
+-- based on the current mode and the specified parameters
 local function calcEllipseParams(mode, a,b,c,d)
 
 	if not d then 
@@ -1028,9 +1037,7 @@ local function calcEllipseParams(mode, a,b,c,d)
 end
 
 function DrawingContext.line(self, x1, y1, x2, y2)
-    self:strokeLine(x1,y1,x2,y2)
-
-	return self;
+    return self:strokeLine(x1,y1,x2,y2)
 end
 
 function DrawingContext.ellipse(self, cx, cy, rx, ry)
@@ -1047,11 +1054,21 @@ function DrawingContext.ellipse(self, cx, cy, rx, ry)
 		local bResult, err = self.DC:strokeEllipse(geo)
 	end
 
-	return self
+	return true
 end
 
 function DrawingContext.circle(self, cx, cy, r)
-    return self:ellipse(cx, cy, r, r)
+    local geo = BLCircle(cx, cy, r)
+
+    if self.useFill then
+        self.DC:fillCircle(geo)
+    end
+
+    if self.useStroke then
+        self.DC:strokeGeometry(C.BL_GEOMETRY_TYPE_CIRCLE, geo);
+    end
+
+    return true;
 end
 
 
@@ -1066,7 +1083,7 @@ end
 
 function DrawingContext.stretchBlt (self, dstRect, img, imgArea)
     --print("DrawingContext.stretchBlt: ", tostring(dstRect), img, tostring(imgArea))
----0[[
+---[[
     local blctx = self.DC;
     local bResult = blctx.impl.virt.blitScaledImageD(blctx.impl, 
         dstRect, 
