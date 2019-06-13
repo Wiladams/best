@@ -16,7 +16,7 @@ function SliderThumb.new(self, obj)
         radius = SliderThumb.thumbRadius;
     }
     obj.radius = obj.radius or SliderThumb.thumbRadius
-    obj.thumbColor = obj.thumbColor or color(0xC0)
+    obj.thumbColor = obj.thumbColor or 0xC0
     obj.shape = BLRoundRect(0, 0, obj.frame.width, obj.frame.height, obj.radius, obj.radius);
 
     setmetatable(obj, SliderThumb_mt)

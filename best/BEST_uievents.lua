@@ -16,6 +16,13 @@ local bit = require("bit")
 local band, bor = bit.band, bit.bor
 local rshift, lshift = bit.rshift, bit.lshift;
 
+local WORD = ffi.typeof("WORD")
+local DWORD_PTR = ffi.typeof("DWORD_PTR")
+
+local function LOWORD(l)         return  WORD(band(DWORD_PTR(l) , 0xffff)) end
+local function HIWORD(l)         return  WORD(band(rshift(DWORD_PTR(l) , 16) , 0xffff)) end
+
+
 -- BUGBUG, these should be 'g'
 wmFocusWindow = nil
 wmLastMouseWindow = nil;
@@ -48,6 +55,10 @@ local function wm_mouse_event(hwnd, msg, wparam, lparam)
         mbutton = band(wparam, C.MK_MBUTTON) ~= 0;
         xbutton1 = band(wparam, C.MK_XBUTTON1) ~= 0;
         xbutton2 = band(wparam, C.MK_XBUTTON2) ~= 0;
+
+        msg = msg;
+        wparam = wparam;
+        lparam = lparam;
     }
 
     mousePressed = event.lbutton or event.rbutton or event.mbutton;
@@ -69,6 +80,7 @@ local function wm_mouse_event(hwnd, msg, wparam, lparam)
         event.activity = 'mouseup'
     elseif msg == C.WM_MOUSEWHEEL then
         event.activity = 'mousewheel';
+        event.distance = tonumber(ffi.cast("int16_t",HIWORD(wparam)));
     elseif msg == C.WM_MOUSELEAVE then
         event.activity = "mouseleave"
     else

@@ -69,7 +69,7 @@ function ImageScaleView.drawBackground(self, ctx)
     -- caption of filter name
     ctx:fill(0);
     ctx:textFont("segoe ui");
-    ctx:textSize(12);
+    ctx:textSize(16);
     ctx:text(self.filterName, 20, 40);
 end
 
