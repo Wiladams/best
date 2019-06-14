@@ -114,15 +114,15 @@ end
 
 local function app(params)
   local win1 = WMCreateWindow(params)
-  win1:setUseTitleBar(true)
-  
+ 
   -- negate drawing the default background
   function win1.drawBackground(self, ctx)
   end
 
   local sys = GLSystem:new({frame={x=0, y=0, width=params.frame.width, height=params.frame.height}})
 
-  -- draw a background
+  -- draw a background once
+  -- then never touch it
   local ctx = win1:getDrawingContext()
   ctx:background(255)
   ctx:stroke(0)
@@ -137,11 +137,7 @@ local function app(params)
 
   -- we can use the system scheduler to do interesting
   -- things
-  periodic(1000/200, drawproc)
-  --while true do
-  --    win1:draw()
-  --    yield();
-  --end
+  periodic(1000/60, drawproc)
 end
 
 return app

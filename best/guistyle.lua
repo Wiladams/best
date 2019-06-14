@@ -113,25 +113,14 @@ function GUIStyle.new(self, obj)
 
     obj.fBaseColor = Colorrefs.LtGray;
     obj.fForeground = Colorrefs.LtGray;
-
     obj.fTextBackground = obj.fBaseColor;
-
     obj.fHighlightColor = brighter(obj.fBaseColor);
-
     obj.fShadowColor = darker(obj.fBaseColor);
-
     obj.fBackground = brighter(obj.fHighlightColor);
-
-
     obj.fBottomShadow = darker(obj.fForeground); -- 0x00616161;
-
     obj.fBottomShadowTopLiner = brighter(obj.fBottomShadow); --fForeground;
-
     obj.fBottomShadowBottomLiner = obj.fBottomShadow;
-
     obj.fTopShadow = brighter(obj.fForeground);  -- 0x00cbcbcb;
-
-
     obj.fBackground = brighter(Colorrefs.DarkGray); --0x009e9e9e;
 
 

@@ -29,6 +29,7 @@ local Graphic_mt = {
 function Graphic.new(self, obj)
     obj = Drawable:new(obj)
     setmetatable(obj, Graphic_mt)
+    
     return obj;
 end
 

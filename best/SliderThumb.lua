@@ -1,5 +1,8 @@
 
-
+-- A slider thumb is a simple thing that
+-- knows how to draw a thumb for a slider
+-- easily augmented with any draw method
+-- to specialize the appearance.
 local SliderThumb = {
     thumbRadius = 8;
     thumbThickness = 24
