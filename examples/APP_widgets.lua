@@ -1,4 +1,5 @@
 local BOnOffSwitch = require("BOnOffSwitch")
+local BTextLabel = require("BTextLabel")
 
 local function app(params)
     -- create a simple windows
@@ -9,11 +10,22 @@ local function app(params)
         ctx:rect(0,0,self.frame.width, self.frame.height)
     end
 
+    -- text labels
+    local lbl1 = BTextLabel:new({frame = {x=10,y=50, width = 60, height=32}, fontSize=16, text="Switch 1:"})
+    local lbl2 = BTextLabel:new({frame = {x=10,y=90, width = 60, height=32}, fontSize=16, text="Switch 2:"})
+    local lbl3 = BTextLabel:new({frame = {x=10,y=130, width = 60, height=32}, fontSize=16, text="Switch 3:"})
+    
+    win1:add(lbl1)
+    win1:add(lbl2)
+    win1:add(lbl3)
+    
+    
     -- create on/off switch
     local sw0 = BOnOffSwitch:new()
-    local sw1 = BOnOffSwitch:new({frame={x=10,y=50,width=64,height=32}})
-    local sw2 = BOnOffSwitch:new({frame={x=10,y=90,width=128,height=32}})
-    local sw3 = BOnOffSwitch:new({frame={x=10,y=130,width=256,height=32}})
+    local sw1 = BOnOffSwitch:new({frame={x=80,y=50,width=64,height=32}})
+    local sw2 = BOnOffSwitch:new({frame={x=80,y=90,width=128,height=32}})
+    local sw3 = BOnOffSwitch:new({frame={x=80,y=130,width=256,height=32}})
+
 
     win1:add(sw0)
     win1:add(sw1)
