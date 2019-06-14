@@ -543,42 +543,14 @@ struct Smain {
   int status;
 };
 
-/*
-const char * startupScript = "            \
-local DeskTopper = require('DeskTopper')  \
-local vkeys = require('vkeys')            \
-\
-local appname = arg[1]                    \
-\
-if not appname then                       \
-    print('you must specify a app name')  \
-    return nil                            \
-end                                       \
-\
-local app = require(appname)              \
-\
-local function handleKeyEvent(event)      \
-    if event.keyCode == vkeys.VK_ESCAPE then  \
-        halt()                            \
-    end                                   \
-end                                       \
-\
-\
-local function startup(params)            \
-    spawn(app, params)                    \
-\
-    on('gap_keytyped', handleKeyEvent)    \
-end                                       \
-\
-DeskTopper {startup = startup, frameRate=30}";
-*/
+
 
 // This is the startup script we need to run
 // to get things going after the user script
 // has been loaded.
 const char * startupScript = "            \
-local DeskTopper = require('DeskTopper')  \
-DeskTopper {startup = startup, frameRate=30}";
+local WinMan = require('WinMan')  \
+WinMan {startup = startup, frameRate=30}";
 
 static int pmain(lua_State *L)
 {

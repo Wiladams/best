@@ -140,6 +140,8 @@ end
 function WMCreateWindow(params)
     local win = Window:new (params)
 
+    -- set the dpi on the drawing context
+    
     table.insert(windowGroup, win)
     --windowGroup:add(win)
 

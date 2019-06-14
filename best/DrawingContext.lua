@@ -576,28 +576,6 @@ function DrawingContext.fillRoundRect(self, rect)
     return self.DC:fillGeometry(C.BL_GEOMETRY_TYPE_ROUND_RECT, rect)
 end
 
---[[
-function DrawingContext.fillRoundRect (self, ...)
-    local nargs = select('#', ...)
-        
-    if nargs < 1 then return false end
-
-    local rect = select(1,...)
-
-    if nargs == 1 then
-          return self.DC:fillGeometry(C.BL_GEOMETRY_TYPE_ROUND_RECT, rect)
-    elseif nargs == 2 then
-          local rrect = BLRoundRect(rect.x, rect.y, rect.w, rect.h, select(2,...), select(2,...))
-          return self.DC:fillGeometry(C.BL_GEOMETRY_TYPE_ROUND_RECT, rrect)
-    elseif nargs == 3 then
-          local rrect = BLRoundRect(rect.x, rect.y, rect.w, rect.h, select(2,...), select(3,...))
-          return self.DC:fillGeometry(C.BL_GEOMETRY_TYPE_ROUND_RECT, rrect)
-    elseif nargs == 5 then
-          local rrect = BLRoundRect(select(1,...), select(2,...), select(3,...), select(4,...), select(5,...), select(5,...))
-          return self.DC:fillGeometry(C.BL_GEOMETRY_TYPE_ROUND_RECT, rrect)
-    end
-end
---]]
 
 function DrawingContext.fillTriangle (self, ...)
     local nargs = select("#",...)
