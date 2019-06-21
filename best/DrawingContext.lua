@@ -28,6 +28,10 @@ local blapi = require("blend2d")
 
 local enum = require("enum")
 local maths = require("maths")
+
+local coloring = require("coloring")
+color = coloring.color
+
 local FontMonger = require("FontMonger")
 
 
@@ -696,49 +700,7 @@ end
     Simple primitives UI
 ]]
 
-function color(...)
---function DrawingContext.color(self, ...)
-	local nargs = select('#', ...)
 
-	-- There can be 1, 2, 3, or 4, arguments
-	--	print("Color.new - ", nargs)
-	
-	local r = 0
-	local g = 0
-	local b = 0
-	local a = 255
-	
-	if (nargs == 1) then
-			r = select(1,...)
-			g = r
-			b = r
-			a = 255;
-	elseif nargs == 2 then
-			r = select(1,...)
-			g = r
-			b = r
-			a = select(2,...)
-	elseif nargs == 3 then
-			r = select(1,...)
-			g = select(2,...)
-			b = select(3,...)
-			a = 255
-	elseif nargs == 4 then
-		r = select(1,...)
-		g = select(2,...)
-		b = select(3,...)
-		a = select(4,...)
-    end
-    
-    local pix = BLRgba32()
---print("r,g,b: ", r,g,b)
-    pix.r = r
-    pix.g = g
-    pix.b = b 
-    pix.a = a
-
-	return pix;
-end
 
 function DrawingContext.color(self, ...)
     return color(...)

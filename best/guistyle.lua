@@ -39,6 +39,9 @@
 --]]
 
 local maths = require("maths")()
+local coloring = require("coloring")
+local color = coloring.color
+
 
 local Colorrefs = {
     Black = color(0, 0, 0);
