@@ -1,5 +1,7 @@
 --package.path = "../best/?.lua;../?.lua;"..package.path;
-
+--[[
+    An application where various widgets can be tried out
+]]
 local BOnOffSwitch = require("BOnOffSwitch")
 local BTextLabel = require("BTextLabel")
 local Slider = require("slider")
@@ -9,7 +11,7 @@ local gstyle = guistyle:new()
 local function app(params)
 
     -- create a simple windows
-    local win1 = WMCreateWindow({frame = {x=10,y=10,width=640,height=480}})
+    local win1 = WMCreateWindow({frame = {x=10,y=10,width=800,height=600}})
     
     function win1.drawBackground(self, ctx)
         ctx:fill(0xff)
