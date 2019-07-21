@@ -244,12 +244,14 @@ function GraphicGroup.mouseEvent(self, event)
             return self:mouseDown(event)
         elseif event.activity == "mousemove" then
             return self:mouseMove(event)
+        elseif event.activity == "mousewheel" then
+            return self:mouseWheel(event)
         end
     end
 
     -- and if we're here, we don't understand the mouse
     -- event, so we can just return false
-    print("GraphicGroup.mouseEvent - UNKNOWN")
+    print("GraphicGroup.mouseEvent - UNKNOWN: ", event.msg, event.activity, event.distance)
     return false;
 end
 
@@ -267,6 +269,10 @@ end
 
 function GraphicGroup.mouseHover(self, event)
 end
+
+function GraphicGroup.mouseWheel(self, event)
+end
+
 
 return GraphicGroup
 

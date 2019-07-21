@@ -22,7 +22,8 @@ function Window.new(self, obj)
     obj.isShown = true;
     
     -- add a drawing context
-    obj.drawingContext = DrawingContext:new({width = obj.frame.width, height = obj.frame.height});
+    obj.dpi = obj.dpi or 96
+    obj.drawingContext = DrawingContext:new({width = obj.frame.width, height = obj.frame.height, dpi=obj.dpi});
     obj.titleBar = TitleBar:new({
         frame = {x=0,y=0,width = obj.frame.width, height=36};
         window = obj;

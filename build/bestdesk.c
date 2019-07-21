@@ -511,7 +511,7 @@ int RunLuaScript(void *s)
 {
   char *codechunk = (char *)s;
 
-  int status;
+  int status=0;
   lua_State *L = lua_open();  /* create the state */
 
   if (L == NULL)

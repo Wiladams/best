@@ -27,7 +27,7 @@ local page = require("FontListPage")
 local functor = require("functor")
 local Checkerboard = require("CheckerGraphic")
 local vkeys = require("vkeys")
-
+local ContextRecorder = require("ContextRecorder")
 
 local function handleKeyEvent(event)
     if event.keyCode == vkeys.VK_ESCAPE then
@@ -38,7 +38,7 @@ end
 local function app()
     
     -- start by creating a window
-    local winFrame = {frame = {x=40,y=40, width = 1024, height = 768}}
+    local winFrame = {frame = {x=40,y=40, width = 800, height = 600}}
     local win1 = WMCreateWindow(winFrame)
 
     -- Now start to compose window contents
@@ -98,6 +98,14 @@ local function app()
     local function drawproc()
          win1:draw()
     end
+
+    local recorder = ContextRecorder:new({
+        frameRate = 10;
+        maxFrames = 100;
+        drawingContext = win1.drawingContext;
+        basename = "output\\fontlist";
+    })
+    --recorder:record();
 
     periodic(1000/20, drawproc)
 end

@@ -687,6 +687,7 @@ BOOL UpdateLayeredWindow(HWND hWnd, HDC hdcDst, POINT* pptDst, SIZE* psize,
     DWORD dwFlags);
 
 DPI_AWARENESS_CONTEXT SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT dpiContext);
+UINT __stdcall GetDpiForSystem();
 
 // Touch Related founctions
 BOOL RegisterTouchWindow(HWND hwnd, ULONG ulFlags);
@@ -812,11 +813,7 @@ end
 function exports.CreateWindowHandle(params)
     params.title = params.title or "Window";
     params.winstyle = params.winstyle or C.WS_OVERLAPPEDWINDOW;
-    if not LAYERED_WINDOW then
     params.winxstyle = params.winxstyle or 0;
-    else
-    params.winxstyle = params.winxstyle or C.WS_EX_LAYERED;
-    end
     params.x = params.x or C.CW_USEDEFAULT;
     params.y = params.y or C.CW_USEDEFAULT;
 

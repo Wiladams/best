@@ -2,7 +2,7 @@ local GLogLines = require("GLogLines")
 
 local function app(params)
     local win1 = WMCreateWindow(params)
-    local plane = GLogLines:new(params)
+    local plane = GLogLines:new({frame = {x=0,y=0,width=params.frame.width, height=params.frame.height}})
 
 
     function win1.drawBackground(self, ctx)
@@ -12,8 +12,6 @@ local function app(params)
         ctx:fill(0xA0, 0xF0, 0xF0)    -- sky
         ctx:noStroke();
         ctx:rect(0,0,self.frame.width,(self.frame.height/2)-20)
-
-
     end
 
     win1:add(plane)

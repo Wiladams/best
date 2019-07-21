@@ -1,7 +1,7 @@
 local ffi = require("ffi")
 local C = ffi.C 
 
-local blapi = require("blend2d.blend2d")
+local blapi = require("blend2d")
 local errors = require("blerror")
 local functor = require("functor")
 

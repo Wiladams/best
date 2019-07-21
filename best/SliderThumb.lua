@@ -1,5 +1,8 @@
 
-
+-- A slider thumb is a simple thing that
+-- knows how to draw a thumb for a slider
+-- easily augmented with any draw method
+-- to specialize the appearance.
 local SliderThumb = {
     thumbRadius = 8;
     thumbThickness = 24
@@ -16,7 +19,8 @@ function SliderThumb.new(self, obj)
         radius = SliderThumb.thumbRadius;
     }
     obj.radius = obj.radius or SliderThumb.thumbRadius
-    obj.thumbColor = obj.thumbColor or color(0xC0)
+    obj.thumbColor = obj.thumbColor or 0xC0
+    obj.shape = BLRoundRect(0, 0, obj.frame.width, obj.frame.height, obj.radius, obj.radius);
 
     setmetatable(obj, SliderThumb_mt)
 
@@ -26,7 +30,7 @@ end
 -- a lozinger rounded rect
 function SliderThumb.draw(self, ctx)
     ctx:fill(self.thumbColor)
-    ctx:fillRoundRect(BLRoundRect(self.frame.x, self.frame.y, self.frame.width, self.frame.height, self.radius, self.radius))
+    ctx:fillRoundRect(self.shape)
 end
 
 function SliderThumb.moveBy(self, dx, dy)

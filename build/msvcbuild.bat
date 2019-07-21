@@ -30,6 +30,10 @@
 
 
 @rem The best core library
+%LUAC% ../best/BEST_system.lua BEST_system.obj
+%LUAC% ../best/BEST_uievents.lua BEST_uievents.obj
+%LUAC% ../best/BEST_uisignaling.lua BEST_uisignaling.obj
+%LUAC% ../best/BEST_win32.lua BEST_win32.obj
 %LUAC% ../best/BLDIBSection.lua BLDIBSection.obj
 %LUAC% ../best/blerror.lua blerror.obj
 %LUAC% ../best/collections.lua collections.obj
@@ -46,7 +50,7 @@
 %LUAC% ../best/unicode_util.lua unicode_util.obj
 %LUAC% ../best/vkeys.lua vkeys.obj
 %LUAC% ../best/win32.lua win32.obj
-@set BESTLIB=BLDIBSection.obj blerror.obj collections.obj coloring.obj ContextRecorder.obj DrawingContext.obj  enum.obj filesystem.obj FontMonger.obj functor.obj Gradient.obj maths.obj scheduler.obj spairs.obj unicode_util.obj vkeys.obj win32.obj
+@set BESTLIB=BEST_system.obj BEST_uievents.obj BEST_uisignaling.obj BEST_win32.obj BLDIBSection.obj blerror.obj collections.obj coloring.obj DrawingContext.obj  enum.obj filesystem.obj FontMonger.obj functor.obj Gradient.obj maths.obj scheduler.obj spairs.obj unicode_util.obj vkeys.obj win32.obj
 
 @rem The BEST GUI Library
 %LUAC% ../best/BView.lua BView.obj
@@ -84,17 +88,26 @@
 %LJCOMPILE% bestdesk.c
 @if errorlevel 1 goto :BAD
 
+%LJCOMPILE% bestwin.c
+@if errorlevel 1 goto :BAD
+
 %LJLINK% /out:bestdesk.exe %LJLIBNAME% bestdesk.obj %CLIBS% %BESTLIB% %BESTGUILIB% %BLEND2DLIB% %DESKTOPPERLIB%
 @if errorlevel 1 goto :BAD
 if exist bestdesk.exe.manifest^
   %LJMT% -manifest bestdesk.exe.manifest -outputresource:bestdesk.exe
 
+%LJLINK% /out:bestwin.exe %LJLIBNAME% bestwin.obj %CLIBS% %BESTLIB% %BESTGUILIB% %BLEND2DLIB% %WINMANLIB%
+@if errorlevel 1 goto :BAD
+if exist bestwin.exe.manifest^
+  %LJMT% -manifest bestwin.exe.manifest -outputresource:bestwin.exe
+
 
 
 del *.obj *.manifest
 @echo.
-@echo === Successfully built bestdesk for Windows/%LJARCH% ===
+@echo === Successfully built best applications for Windows/%LJARCH% ===
 move bestdesk.exe bin 
+move bestwin.exe bin
 
 goto :END
 :BAD

@@ -24,10 +24,14 @@ local ffi = require("ffi")
 local C = ffi.C 
 
 
-local blapi = require("blend2d.blend2d")
+local blapi = require("blend2d")
 
 local enum = require("enum")
 local maths = require("maths")
+
+local coloring = require("coloring")
+color = coloring.color
+
 local FontMonger = require("FontMonger")
 
 
@@ -208,11 +212,13 @@ local DrawingContext_mt = {
 
 function DrawingContext.new(self, obj)
     --print("DrawingContext.new")
-    obj = obj or {}
+    if not obj then return nil, "must specify at least width and height" end
 
+    obj.dpi = obj.dpi or 96
     obj.fontMonger = obj.fontMonger or FontMonger:new()
-    obj.fontMonger:setDpi(192)
+    obj.fontMonger:setDpi(obj.dpi)
     obj.BackingBuffer = obj.BackingBuffer or BLImage(obj.width, obj.height)
+    
     obj.DC = obj.DC or ffi.new("struct BLContextCore")
     local bResult = blapi.blContextInitAs(obj.DC, obj.BackingBuffer, nil)
     if bResult ~= C.BL_SUCCESS then
@@ -220,7 +226,6 @@ function DrawingContext.new(self, obj)
     end
 
     -- Initial State information
-    obj.StrokeWeight = 1;
 
     -- Typography
     obj.fontSize = 18;
@@ -575,28 +580,6 @@ function DrawingContext.fillRoundRect(self, rect)
     return self.DC:fillGeometry(C.BL_GEOMETRY_TYPE_ROUND_RECT, rect)
 end
 
---[[
-function DrawingContext.fillRoundRect (self, ...)
-    local nargs = select('#', ...)
-        
-    if nargs < 1 then return false end
-
-    local rect = select(1,...)
-
-    if nargs == 1 then
-          return self.DC:fillGeometry(C.BL_GEOMETRY_TYPE_ROUND_RECT, rect)
-    elseif nargs == 2 then
-          local rrect = BLRoundRect(rect.x, rect.y, rect.w, rect.h, select(2,...), select(2,...))
-          return self.DC:fillGeometry(C.BL_GEOMETRY_TYPE_ROUND_RECT, rrect)
-    elseif nargs == 3 then
-          local rrect = BLRoundRect(rect.x, rect.y, rect.w, rect.h, select(2,...), select(3,...))
-          return self.DC:fillGeometry(C.BL_GEOMETRY_TYPE_ROUND_RECT, rrect)
-    elseif nargs == 5 then
-          local rrect = BLRoundRect(select(1,...), select(2,...), select(3,...), select(4,...), select(5,...), select(5,...))
-          return self.DC:fillGeometry(C.BL_GEOMETRY_TYPE_ROUND_RECT, rrect)
-    end
-end
---]]
 
 function DrawingContext.fillTriangle (self, ...)
     local nargs = select("#",...)
@@ -717,49 +700,7 @@ end
     Simple primitives UI
 ]]
 
-function color(...)
---function DrawingContext.color(self, ...)
-	local nargs = select('#', ...)
 
-	-- There can be 1, 2, 3, or 4, arguments
-	--	print("Color.new - ", nargs)
-	
-	local r = 0
-	local g = 0
-	local b = 0
-	local a = 255
-	
-	if (nargs == 1) then
-			r = select(1,...)
-			g = r
-			b = r
-			a = 255;
-	elseif nargs == 2 then
-			r = select(1,...)
-			g = r
-			b = r
-			a = select(2,...)
-	elseif nargs == 3 then
-			r = select(1,...)
-			g = select(2,...)
-			b = select(3,...)
-			a = 255
-	elseif nargs == 4 then
-		r = select(1,...)
-		g = select(2,...)
-		b = select(3,...)
-		a = select(4,...)
-    end
-    
-    local pix = BLRgba32()
---print("r,g,b: ", r,g,b)
-    pix.r = r
-    pix.g = g
-    pix.b = b 
-    pix.a = a
-
-	return pix;
-end
 
 function DrawingContext.color(self, ...)
     return color(...)
@@ -816,26 +757,23 @@ end
 
 
 function DrawingContext.strokeCaps(self, strokeCap)
-	self.DC:setStrokeCaps(strokeCap) ;
+    return self.DC:setStrokeCaps(strokeCap) ;
 end
 
 function DrawingContext.strokeStartCap(self, cap)
-    self.DC:setStrokeStartCap(cap)
-    return self;
+    return self.DC:setStrokeStartCap(cap)
 end
 
 function DrawingContext.strokeEndCap(self, cap)
-    self.DC:setStrokeEndCap(cap)
-    return self;
+    return self.DC:setStrokeEndCap(cap)
 end
 
 function DrawingContext.strokeJoin(self, join)
-    self.DC:setStrokeJoin(join)
+    return self.DC:setStrokeJoin(join)
 end
 
 function DrawingContext.strokeWidth(self, weight)
-    self.StrokeWeight = weight;
-    self.DC:setStrokeWidth(weight);
+    return self.DC:setStrokeWidth(weight);
 end
 
 --[[
@@ -888,15 +826,21 @@ end
 
 function DrawingContext.textAlign(self, halign, valign)
 	self.TextHAlignment = halign or DrawingContext.constants.LEFT
-	self.TextVAlignment = valign or DrawingContext.constants.BASELINE
+    self.TextVAlignment = valign or DrawingContext.constants.BASELINE
+    
+    return true;
 end
 
 function DrawingContext.textLeading(self, leading)
-	self.TextLeading = leading
+    self.TextLeading = leading
+    
+    return true;
 end
 
 function DrawingContext.textMode(self, mode)
-	self.TextMode = mode
+    self.TextMode = mode
+    
+    return true;
 end
 
 function DrawingContext.calcTextPosition(self, txt, x, y)
@@ -917,19 +861,21 @@ function DrawingContext.calcTextPosition(self, txt, x, y)
 	elseif self.TextVAlignment == BASELINE then
 		y = y;
 	elseif self.TextVAlignment == BOTTOM then
-		y = y;	end
-	return x, y
+        y = y;	
+    end
+    
+    return x, y
 end
 
 function DrawingContext.text(self, txt, x, y)
 	local x, y = self:calcTextPosition(txt, x, y)
-	self.DC:fillTextUtf8(BLPoint(x,y), self.Font, txt, #txt)
+	return self.DC:fillTextUtf8(BLPoint(x,y), self.Font, txt, #txt)
 end
 
 function DrawingContext.textOutline(self, txt, x, y)
     local x, y = self:calcTextPosition(txt, x, y)
     --print("textOutline: ", x, y)
-    self.DC:strokeTextUtf8(BLPoint(x,y), self.Font, txt, #txt)
+    return self.DC:strokeTextUtf8(BLPoint(x,y), self.Font, txt, #txt)
 end
 
 
@@ -991,6 +937,9 @@ function DrawingContext.rect(self, a,b,c,d)
 	return true;
 end
 
+-- Our drawing is based on center and two radii
+-- so this routine needs to calculate those values
+-- based on the current mode and the specified parameters
 local function calcEllipseParams(mode, a,b,c,d)
 
 	if not d then 
@@ -1028,9 +977,7 @@ local function calcEllipseParams(mode, a,b,c,d)
 end
 
 function DrawingContext.line(self, x1, y1, x2, y2)
-    self:strokeLine(x1,y1,x2,y2)
-
-	return self;
+    return self:strokeLine(x1,y1,x2,y2)
 end
 
 function DrawingContext.ellipse(self, cx, cy, rx, ry)
@@ -1047,11 +994,21 @@ function DrawingContext.ellipse(self, cx, cy, rx, ry)
 		local bResult, err = self.DC:strokeEllipse(geo)
 	end
 
-	return self
+	return true
 end
 
 function DrawingContext.circle(self, cx, cy, r)
-    return self:ellipse(cx, cy, r, r)
+    local geo = BLCircle(cx, cy, r)
+
+    if self.useFill then
+        self.DC:fillCircle(geo)
+    end
+
+    if self.useStroke then
+        self.DC:strokeGeometry(C.BL_GEOMETRY_TYPE_CIRCLE, geo);
+    end
+
+    return true;
 end
 
 
@@ -1059,30 +1016,21 @@ end
     Images
 ]]
 function DrawingContext.blit (self, img, x, y)
+    x = x or 0
+    y = y or 0
     return self.DC:blitImage(BLPoint(x,y), img)
---[[
-    local imgArea = BLRectI(0,0,img:size().w, img:size().h)
-    local bResult = blapi.blContextBlitImageD(self.DC, BLPoint(x,y), img, imgArea) ;
-    
-    if bResult == C.BL_SUCCESS then
-        return self;
-    end
-
-    return false, bResult
---]]
 end
 
 function DrawingContext.stretchBlt (self, dstRect, img, imgArea)
-    return self.DC:blitScaledImage(dstRect, img, imgArea)
---[[
-    local bResult = blapi.blContextBlitScaledImageD(self.DC, dstRect, img, imgArea) ;
-
-    if bResult == C.BL_SUCCESS then
-        return self;
-    end
-
-    return false, bResult
+    --print("DrawingContext.stretchBlt: ", tostring(dstRect), img, tostring(imgArea))
+---[[
+    local blctx = self.DC;
+    local bResult = blctx.impl.virt.blitScaledImageD(blctx.impl, 
+        dstRect, 
+        img, 
+        imgArea);
 --]]
+    --return self.DC:blitScaledImage(dstRect, img, imgArea)
 end
 
 return DrawingContext
