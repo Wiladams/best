@@ -112,14 +112,14 @@ function GLSystem.draw(self, ctx)
     end
 end
 
-local function app(params)
-  local win1 = WMCreateWindow(params)
+function app()
+  local win1 = WMCreateWindow({frame = {x=40,y=40, width = 1280, height = 768}})
  
   -- negate drawing the default background
   function win1.drawBackground(self, ctx)
   end
 
-  local sys = GLSystem:new({frame={x=0, y=0, width=params.frame.width, height=params.frame.height}})
+  local sys = GLSystem:new({frame={x=0, y=0, width=win1.frame.width, height=win1.frame.height}})
 
   -- draw a background once
   -- then never touch it
@@ -139,5 +139,7 @@ local function app(params)
   -- things
   periodic(1000/60, drawproc)
 end
+
+require("windowapp")
 
 return app

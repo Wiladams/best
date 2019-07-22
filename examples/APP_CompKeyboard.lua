@@ -1,15 +1,15 @@
 
 local keyboard = require("GCompKeyboard")
 
-local function app(params)
+function app(params)
     local win1 = WMCreateWindow({
-        frame={x=params.frame.x, y=params.frame.y,
-            width=params.frame.width,height=params.frame.height
+        frame={x=0, y=0,
+            width=640,height=320
         }
     })
     win1:setTitle("STOP_CompKeyboard.lua")
     
-    local kbd = keyboard:new({frame={x=0, y = 0, width = 610, height=290}})
+    local kbd = keyboard:new({frame={x=10, y = 10, width = 610, height=290}})
     --local size = kbd:getPreferredSize()
     --print("kbd size: ", size.width, size.height)
 
@@ -21,5 +21,7 @@ local function app(params)
         yield();
     end
 end
+
+require("windowapp")
 
 return app

@@ -34,7 +34,7 @@ end
 function EasingGraph.drawForeground(self, ctx)
     local apath = BLPath()
     apath:moveTo(4,200-4)
-    for t = 0, self.duration, 0.1 do
+    for t = 0, self.duration, 0.01 do
         local value = self.interpolator(t, self.startValue, self.changeInValue, self.duration)
         local x = map(t, 0, self.duration, 4, 200-4)
         local y = map(value, self.startValue, self.startValue+self.changeInValue, 200-4, 4)

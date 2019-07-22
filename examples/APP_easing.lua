@@ -50,9 +50,9 @@ local easings = {
 
 }
 
-local function app(params)
+function app(params)
 
-    local winparams = {frame = {x=0,y=0, width = 800, height = 2000}}
+    local winparams = {frame = {x=0,y=0, width = 800, height = 1024}}
     local win1 = WMCreateWindow(winparams)
  
     function win1.drawBackground(self, ctx)
@@ -120,31 +120,9 @@ local function app(params)
     --periodic(1000/20, drawproc)
 end
 
---[[
-    quick and dirty get app up on the window
---]]
--- quit when user presses escape
-local function handleKeyEvent(event)
-    if event.keyCode == vkeys.VK_ESCAPE then
-        halt()
-    end
-end
 
 
-local function main()
-    on("gap_keytyped", handleKeyEvent)
-
-    app()
-end
-
---[[
-    If we're being used as a standalone app, then 
-        this setup function is called.
-]]
-
-function startup()
-    spawn(main)
-end
+require("windowapp")
 
 
 return app

@@ -17,14 +17,11 @@ local functor = require("functor")
 local ImageScaleView = require("ImageScaleView")
 
 
-
-
-
-local function app()
+function app()
     local srcImage, err = GImage:createFromFile("resources\\baboon.png")
     srcImage:moveTo(40,40)
 
-    local winFrame = {frame = {x=40,y=40, width = 1280, height = 1400}}
+    local winFrame = {frame = {x=40,y=40, width = 1280, height = 1024}}
     local win1 = WMCreateWindow(winFrame)
 
     function win1.drawBackground(self, ctx)
@@ -66,7 +63,10 @@ local function app()
         page = filterPage;
     })
     
-    local boxSlider = sliding.createVertical(viewbox)
+
+    local boxSlider = Slider:create{
+        startPoint ={x=viewbox.frame.x+viewbox.frame.width+12,y=viewbox.frame.y}, 
+        endPoint={x=viewbox.frame.x+viewbox.frame.width+12;y=viewbox.frame.y+viewbox.frame.height}};
 
     win1:add(srcImage);
     win1:add(viewbox);
@@ -83,5 +83,6 @@ local function app()
     periodic(1000/15, drawproc)
 end
 
+require("windowapp")
 
 return app

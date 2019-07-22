@@ -1,3 +1,17 @@
+--[[
+    If you are using bestwin.exe...
+
+    This is a convenience for making a single window application.
+    Simply include this at the bottom of any file that implements
+    a global 'app()' function.
+
+    This file implements the requisite 'startup()' function that bestwin.exe
+    needs to see, and also implements the 'esc == exit' function.
+]]
+
+
+
+
 local vkeys = require("vkeys")
 
 --[[
@@ -13,6 +27,12 @@ end
 local function main()
     on("gap_keytyped", handleKeyEvent)
 
+    if not app then
+        print("windowapp: MUST specify a global 'app' function")
+        halt()
+        return false;
+    end
+    
     app()
 end
 

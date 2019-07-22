@@ -1,6 +1,9 @@
---package.path = "../best/?.lua;../?.lua;"..package.path;
+
 --[[
     An application where various widgets can be tried out
+
+    This is meant to be run with bestwin.exe as the 'app()'
+    function is global.
 ]]
 local BOnOffSwitch = require("BOnOffSwitch")
 local BTextLabel = require("BTextLabel")
@@ -8,7 +11,7 @@ local Slider = require("slider")
 local guistyle = require("guistyle")
 local gstyle = guistyle:new()
 
-local function app(params)
+function app(params)
 
     -- create a simple windows
     local win1 = WMCreateWindow({frame = {x=10,y=10,width=800,height=600}})
@@ -62,5 +65,7 @@ local function app(params)
 
     periodic(1000/10, drawproc)
 end
+
+require("windowapp")
 
 return app

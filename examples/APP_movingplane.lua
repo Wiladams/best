@@ -1,8 +1,8 @@
 local GLogLines = require("GLogLines")
 
-local function app(params)
-    local win1 = WMCreateWindow(params)
-    local plane = GLogLines:new({frame = {x=0,y=0,width=params.frame.width, height=params.frame.height}})
+function app()
+    local win1 = WMCreateWindow({frame={x=0,y=0,width=1024,height=768}})
+    local plane = GLogLines:new({frame = {x=0,y=0,width=win1.frame.width, height=win1.frame.height}})
 
 
     function win1.drawBackground(self, ctx)
@@ -24,4 +24,5 @@ local function app(params)
     periodic(1000/30, drawproc)
 end
 
-return app
+
+require("windowapp")

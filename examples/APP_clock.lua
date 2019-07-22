@@ -1,17 +1,12 @@
 
 local AnalogClock = require("AnalogClock")
 
-local function app(params)
+function app()
     local size = AnalogClock:getPreferredSize()
 
-    params = params or {
-        frame = {x =width - size.width-10; y =10;
-            width = size.width; height = size.height }
-    }
-
-    params.frame =  {
-        x =width - size.width-10; y =10;
-        width = size.width; height = size.height 
+    local params = {
+        frame = {x =0; y =0;
+            width = size.width+8; height = size.height+8 }
     }
 
     local win1 = WMCreateWindow(params)
@@ -32,5 +27,7 @@ local function app(params)
     periodic(1000/30, drawproc)
 
 end
+
+require("windowapp")
 
 return app

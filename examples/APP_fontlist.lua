@@ -29,14 +29,20 @@ local Checkerboard = require("CheckerGraphic")
 local vkeys = require("vkeys")
 local ContextRecorder = require("ContextRecorder")
 
-local function handleKeyEvent(event)
-    if event.keyCode == vkeys.VK_ESCAPE then
-        halt()
-    end
-end
 
-local function app()
-    
+
+function app()
+    local dSize = WMGetDesktopSize()
+
+    -- Create a checkerboard pattern to use as the
+    -- desktop wallpaper
+    local wp = Checkerboard:new({
+        frame={x=0,y=0,width=dSize.width,height=dSize.height},
+        --columns = 64,
+        --rows = 64
+    })
+    WMSetWallpaper(wp)
+
     -- start by creating a window
     local winFrame = {frame = {x=40,y=40, width = 800, height = 600}}
     local win1 = WMCreateWindow(winFrame)
@@ -110,28 +116,4 @@ local function app()
     periodic(1000/20, drawproc)
 end
 
-local function main()
-    -- Establish event handler for typed keys
-    -- this will occur at a desktop level, regardless
-    -- of how keys are handled within individual windows
-    on("gap_keytyped", handleKeyEvent)
-    
-    local dSize = WMGetDesktopSize()
-
-    -- Create a checkerboard pattern to use as the
-    -- desktop wallpaper
-    local wp = Checkerboard:new({
-        frame={x=0,y=0,width=dSize.width,height=dSize.height},
-        --columns = 64,
-        --rows = 64
-    })
-    WMSetWallpaper(wp)
-
-    app()
-end
-
-function startup()
-    spawn(main)
-end
-
-return main
+require("windowapp")

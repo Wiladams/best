@@ -3,7 +3,7 @@ local BView = require("BView")
 local page = require("GSVGColorPage")
 
 
-local function app()
+function app()
     -- create the window and its contents
     -- this could be done as a separate app, but
     -- we'll do it all here to show how a quick desktop
@@ -57,3 +57,6 @@ local function app()
 
     periodic(1000/20, drawproc)
 end
+
+require("windowapp")
+

@@ -1,7 +1,7 @@
 
 local radians = math.rad
 
-local function app(params)
+function app()
     local graphic = require("GParticleFountain")
     local dSize = WMGetDesktopSize()
 
@@ -42,5 +42,7 @@ local function app(params)
 
     --periodic(1000/20, drawproc)
 end
+
+require("windowapp")
 
 return app
