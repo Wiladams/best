@@ -25,7 +25,7 @@ local min, max = math.min, math.max
 
 local SIZE_MAX = 0xffffffffffffffffULL;
 
-local blapi = require("blend2d.blend2d_ffi")
+local blapi = require("blend2d_ffi")
 
 BLArrayView = ffi.typeof("BLArrayView")
 BLStringView = ffi.typeof("BLStringView")
