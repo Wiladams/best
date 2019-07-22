@@ -4,3 +4,7 @@ build/bestdesk.lib
 build/bin/bestdesk.exe
 build/bin/bestwin.exe
 build/bin/bestwin.exe
+build/bestwin.lib
+build/bestwin.exp
+build/bin/lua51.lib
+build/bestwin.lib

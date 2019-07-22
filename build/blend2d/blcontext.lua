@@ -383,26 +383,15 @@ local  BLContext = ffi.typeof("struct BLContextCore")
             return false, bResult;
           end;
     
-          -- dst is a BLRect,
-          -- img is a BLImageCore 
-          -- imgArea is BLRectI, or nil
-          blitScaledImage = function(self, dstRect, img, imgArea)
-            --(BLContextImpl* impl, const BLRect* rect, const BLImageCore* img, const BLRectI* imgArea) ;
-            --print("BLContext.blitScaledImage: ", dst, img, imgArea)
-            --print("BLContext.blitScaledImage:: ", tostring(dst), img, tostring(imgArea))
-            local blctx = self;
-            local bResult = blctx.impl.virt.blitScaledImageD(blctx.impl, 
-                dstRect, 
-                img, 
-                imgArea);
---[[
-            local bResult = self.impl.virt.blitScaledImageD(self.impl, dst, img, imgArea);
+          -- dst is a BLRect, 
+          -- srcArea is BLRectI, or nil
+          blitScaledImage = function(self, dst, src, srcArea)
+            local bResult = self.impl.virt.blitScaledImageD(impl, dst, src, srcArea);
             if bResult == C.BL_SUCCESS then
               return true;
             end
     
             return false, bResult;
---]]
           end;
     
           -- Whole canvas drawing functions
@@ -470,8 +459,6 @@ local  BLContext = ffi.typeof("struct BLContextCore")
                 local arrview = BLArrayView(polypts, npts)
     
                 self:fillGeometry(C.BL_GEOMETRY_TYPE_POLYGOND, arrview)
-    
-                --print(polypts, arrview.data, arrview.size)
               end
           end;
     

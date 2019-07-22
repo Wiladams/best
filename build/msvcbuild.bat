@@ -25,8 +25,9 @@
 %LUAC% blend2d/blcontext.lua blcontext.obj
 %LUAC% blend2d/blend2d_ffi.lua blend2d_ffi.obj
 %LUAC% blend2d/blend2d.lua blend2d.obj
-
-@set BLEND2DLIB=blcontext.obj blend2d_ffi.obj blend2d.obj
+%LUAC% blend2d/blerror.lua blerror.obj
+%LUAC% blend2d/enum.lua enum.obj
+@set BLEND2DLIB=blcontext.obj blend2d_ffi.obj blend2d.obj blerror.obj enum.obj
 
 
 @rem The best core library

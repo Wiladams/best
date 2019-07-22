@@ -662,14 +662,14 @@ BLResult __cdecl blImageWriteToData(const BLImageCore* self, BLArrayCore* dst, c
         end;
 
         resample = function(self, dst, newSize, filter, options)
-            filter = filter or C.BL_IMAGE_SCALE_FILTER_NEAREST
-            local bResult = blapi.blImageScale(dst, self, dst:size(), filter, options) ;
+          filter = filter or C.BL_IMAGE_SCALE_FILTER_NEAREST;
+          local bResult = blapi.blImageScale(dst, self, dst:size(), filter, options) ;
 
-            if bResult == C.BL_SUCCESS then
-              return true;
-            end
+          if bResult == C.BL_SUCCESS then
+            return true;
+          end
 
-            return false, bResult;
+          return false, bResult;
         end;
 
         -- reading and writing with codec is done in codec
@@ -1013,7 +1013,7 @@ ffi.metatype(BLRandom, {
 
 
 
-BLContext = require("blend2d.blcontext")
+BLContext = require("blcontext")
 
 
 
