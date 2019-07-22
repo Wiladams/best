@@ -4,52 +4,51 @@
     Display the various easing/interpolation functions
 ]]
 
+local vkeys = require("vkeys")
 local GraphicGroup = require("GraphicGroup")
+local functor = require("functor")
 local easing = require("easing")
 local radians = math.rad
 local maths = require("maths")
 local map = maths.map
 
-local EasingGraph = {}
-setmetatable(EasingGraph, {
-    __index = GraphicGroup;
-})
-local EasingGraph_mt = {
-    __index = EasingGraph;
+local EasingGraph = require("GEasingGraph")
+local BPanel = require("BPage")
+local BView = require("BView")
+local sliding = require("sliding")
+
+local easings = {
+    {row = 1, column = 1, title = "easeLinear", interpolator = easing.easeLinear};
+
+    {row = 2, column = 1, title = "easeInQuad", interpolator = easing.easeInQuad};
+    {row = 2, column = 2, title = "easeOutQuad", interpolator = easing.easeOutQuad};
+    {row = 2, column = 3, title = "easeInOutQuad", interpolator = easing.easeInOutQuad};
+
+    {row = 3, column = 1, title = "easeInCubic", interpolator = easing.easeInCubic};
+    {row = 3, column = 2, title = "easeOutCubic", interpolator = easing.easeOutCubic};
+    {row = 3, column = 3, title = "easeInOutCubic", interpolator = easing.easeInOutCubic};
+
+    {row = 4, column = 1, title = "easeInQuart", interpolator = easing.easeInQuart};
+    {row = 4, column = 2, title = "easeOutQuart", interpolator = easing.easeOutQuart};
+    {row = 4, column = 3, title = "easeInOutQuart", interpolator = easing.easeInOutQuart};
+
+    {row = 5, column = 1, title = "easeInQuint", interpolator = easing.easeInQuint};
+    {row = 5, column = 2, title = "easeOutQuint", interpolator = easing.easeOutQuint};
+    {row = 5, column = 3, title = "easeInOutQuint", interpolator = easing.easeInOutQuint};
+
+    {row = 6, column = 1, title = "easeInSine", interpolator = easing.easeInSine};
+    {row = 6, column = 2, title = "easeOutSine", interpolator = easing.easeOutSine};
+    {row = 6, column = 3, title = "easeInOutSine", interpolator = easing.easeInOutSine};
+
+    {row = 7, column = 1, title = "easeInExpo", interpolator = easing.easeInExpo};
+    {row = 7, column = 2, title = "easeOutExpo", interpolator = easing.easeOutExpo};
+    {row = 7, column = 3, title = "easeInOutExpo", interpolator = easing.easeInOutExpo};
+
+    {row = 8, column = 1, title = "easeInCirc", interpolator = easing.easeInCirc};
+    {row = 8, column = 2, title = "easeOutCirc", interpolator = easing.easeOutCirc};
+    {row = 8, column = 3, title = "easeInOutCirc", interpolator = easing.easeInOutCirc};
+
 }
-
-function EasingGraph.new(self, obj)
-    obj = GraphicGroup:new(obj)
-
-    obj.interpolator = obj.interpolator or easing.easeLinear;
-    obj.duration = obj.duration or 1.0;
-    obj.startValue = obj.startValue or 0;
-    obj.changeInValue = obj.changeInValue or 1.0;
-
-    setmetatable(obj, EasingGraph_mt)
-
-    return obj;
-end
-
-function EasingGraph.drawBackground(self, ctx)
-    ctx:stroke(0)
-    ctx:noFill();
-    ctx:rect(0,0,self.frame.width, self.frame.height)
-end
-
-function EasingGraph.drawForeground(self, ctx)
-    local apath = BLPath()
-    apath:moveTo(4,200-4)
-    for t = 0, self.duration, 0.1 do
-        local value = self.interpolator(t, self.startValue, self.changeInValue, self.duration)
-        local x = map(t, 0, self.duration, 4, 200-4)
-        local y = map(value, self.startValue, self.startValue+self.changeInValue, 200-4, 4)
-        apath:lineTo(x,y)
-    end
-    ctx:stroke(0)
-    ctx:strokeWidth(4)
-    ctx:strokePath(apath)
-end
 
 local function app(params)
 
@@ -61,42 +60,49 @@ local function app(params)
         ctx:fillAll()
     end
 
-    local easing1 = EasingGraph:new({frame = {x=10,y=10,width=200,height=240}})
+    local panel = BPanel:new({frame={x=0, y=0,width=0,height=0}})
 
-    local easing2 = EasingGraph:new({interpolator = easing.easeInQuad, frame = {x=10,y=300,width=200,height=240}})
-    local easing3 = EasingGraph:new({interpolator = easing.easeOutQuad, frame = {x=240,y=300,width=200,height=240}})
-    local easing4 = EasingGraph:new({interpolator = easing.easeInOutQuad, frame = {x=480,y=300,width=200,height=240}})
+    -- create the easing graphics
+    local xmargin = 10;
+    local ymargin = 10;
+    local cellWidth = 200;
+    local cellHeight = 240;
+    local widthGap = 40;
+    local heightGap = 40;
 
-    local easing5 = EasingGraph:new({interpolator = easing.easeInCubic, frame = {x=10,y=590,width=200,height=240}})
-    local easing6 = EasingGraph:new({interpolator = easing.easeOutCubic, frame = {x=240,y=590,width=200,height=240}})
-    local easing7 = EasingGraph:new({interpolator = easing.easeInOutCubic, frame = {x=480,y=590,width=200,height=240}})
+    for _, entry in ipairs(easings) do 
+        local x = xmargin + (entry.column-1) * (cellWidth + widthGap)
+        local y = ymargin + (entry.row-1) * (cellHeight + heightGap)
+        entry.frame = {x=x, y=y, width = cellWidth, height=cellHeight}
+        --print(x,y,entry.frame.width, entry.frame.height)
+        local easing = EasingGraph:new(entry)
+        panel:addChild(easing)
+    end
 
-    local easing8 = EasingGraph:new({interpolator = easing.easeInQuart, frame = {x=10,y=880,width=200,height=240}})
-    local easing9 = EasingGraph:new({interpolator = easing.easeOutQuart, frame = {x=240,y=880,width=200,height=240}})
-    local easing10 = EasingGraph:new({interpolator = easing.easeInOutQuart, frame = {x=480,y=880,width=200,height=240}})
+    local psize = panel:getPreferredSize()
+    --print("Panel Size: ", psize.width, psize.height)
 
-    local easing11 = EasingGraph:new({interpolator = easing.easeInSine, frame = {x=10,y=1170,width=200,height=240}})
-    local easing12 = EasingGraph:new({interpolator = easing.easeOutSine, frame = {x=240,y=1170,width=200,height=240}})
-    local easing13 = EasingGraph:new({interpolator = easing.easeInOutSine, frame = {x=480,y=1170,width=200,height=240}})
+    local view = BView:new({
+        frame={x=8,y=8, width = 700, height = 800},
+        page = panel
+    })
 
+    local boxSlider = sliding.createSlider({
+        startPoint = {x=view.frame.x+view.frame.width+10,y=view.frame.y};
+        endPoint = {x=view.frame.x+view.frame.width+10, y=view.frame.y+view.frame.height};
+        thickness = 24;
 
-    win1:add(easing1)
+        thumb = {
+            length = 60;
+            thumbColor = 0x70;
+        }
+    })
 
-    win1:add(easing2)
-    win1:add(easing3)
-    win1:add(easing4)
+    -- connect slider to viewbox
+    on(boxSlider, functor(view.handleVerticalPositionChange, view))
 
-    win1:add(easing5)
-    win1:add(easing6)
-    win1:add(easing7)
-
-    win1:add(easing8)
-    win1:add(easing9)
-    win1:add(easing10)
-
-    win1:add(easing11)
-    win1:add(easing12)
-    win1:add(easing13)
+    win1:add(view)
+    win1:add(boxSlider)
 
     win1:show()
 
@@ -113,5 +119,32 @@ local function app(params)
 
     --periodic(1000/20, drawproc)
 end
+
+--[[
+    quick and dirty get app up on the window
+--]]
+-- quit when user presses escape
+local function handleKeyEvent(event)
+    if event.keyCode == vkeys.VK_ESCAPE then
+        halt()
+    end
+end
+
+
+local function main()
+    on("gap_keytyped", handleKeyEvent)
+
+    app()
+end
+
+--[[
+    If we're being used as a standalone app, then 
+        this setup function is called.
+]]
+
+function startup()
+    spawn(main)
+end
+
 
 return app

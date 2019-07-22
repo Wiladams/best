@@ -1,6 +1,6 @@
 local abs = math.abs
 
-local Slider = require("best.slider")
+local Slider = require("slider")
 local MotionConstraint = require("MotionConstraint")
 local SliderThumb = require("SliderThumb")
 
