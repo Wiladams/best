@@ -818,6 +818,8 @@ local function halt(self)
 	Kernel.ContinueRunning = false;
 end
 
+
+
 local function globalizeKernel(tbl)
 	tbl = tbl or _G;
 
@@ -839,6 +841,8 @@ local function globalizeKernel(tbl)
 	rawset(tbl,"onSignal", onSignal);
 	rawset(tbl,"on", on);
 
+
+
 	-- predicates
 	rawset(tbl,"signalOnPredicate", signalOnPredicate);
 	rawset(tbl,"waitForPredicate", waitForPredicate);
@@ -858,6 +862,43 @@ local function globalizeKernel(tbl)
 	rawset(tbl,"millis", millis);
 	return tbl;
 end
+
+
+
+local exports = {
+	halt = halt;
+	run = run;
+	coop = coop;
+	spawn = spawn;
+	suspend = suspend;
+	yield = yield;
+
+	-- signaling
+	signalAll = signalAll;
+	signalAllImmediate = signalAllImmediate;
+	signalOne = signalOne;
+	waitForSignal = waitForSignal;
+	onSignal = onSignal;
+	on = on;
+
+	signalOnPredicate = signalOnPredicate;
+	waitForPredicate = waitForPredicate;
+	when = when;
+	whenever = whenever;
+
+	-- clock/alarm
+	delay = delay;
+	periodic = periodic;
+	runningTime = runningTime;
+	sleep = sleep;
+
+	-- miscellaneous
+	getCurrentTaskID = getCurrentTaskID;
+	StopWatch = StopWatch;
+	seconds = seconds;
+	millis = millis;
+}
+
 
 local global = globalizeKernel();
 
