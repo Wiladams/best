@@ -14,9 +14,17 @@ local graphics = {
     GS.GS7:new();
 }
 
-local function app(params)
+function app()
+    local params = {
+        frame={
+            x=0, y=0,
+            width=640,height=480
+        }
+    }
+
     local win1 = WMCreateWindow(params)
-    
+    win1:setTitle("APP views")
+    win1:setUseTitleBar(true)
 
     function win1:drawForeground(dc)
         for i, g in ipairs(graphics) do
@@ -36,5 +44,7 @@ local function app(params)
         yield();
     end
 end
+
+require("windowapp")
 
 return app

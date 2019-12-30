@@ -198,43 +198,6 @@ local BLFile_mt = {
 ffi.metatype(BLFile, BLFile_mt)
 
 
---[[
-    BLFontLoader
-]]
-BLFontLoader = ffi.typeof("struct BLFontLoaderCore")
-BLFontLoader_mt = {
-  __gc = function(self)
-    blapi.blFontLoaderReset(self);
-  end;
-
-  __index = {
-    -- Meant to be called as: BLFontLoader:createFromFile(filename)
-    createFromFile = function(ct, filename)
-      local obj = ffi.new(ct);
-      local bResult = blapi.blFontLoaderInit(obj);
-      if bResult ~= C.BL_SUCCESS then
-        return nil, bResult
-      end
-
-      local readFlags =  C.BL_FILE_OPEN_READ
-      bResult = blapi.blFontLoaderCreateFromFile(obj, filename, readFlags) ;
-      if bResult ~= C.BL_SUCCESS then
-        return nil, bResult
-      end
-
-      return obj;
-    end;
-
-    dataByIndex = function(self, faceIndex)
-      --BLFontDataImpl* __cdecl blFontLoaderDataByFaceIndex(BLFontLoaderCore* self, uint32_t faceIndex) ;
-      local impl = blapi.blFontLoaderDataByFaceIndex(self, faceIndex) ;
-
-    end;
-  };
-}
-ffi.metatype(BLFontLoader, BLFontLoader_mt)
-
-
 
 --[[
     BLFontFace
@@ -582,6 +545,9 @@ ffi.metatype(BLGradient, BLGradient_mt )
 
 --[[
     BLImage
+
+    Metatype for the BLImage struct
+
 ]]
 BLImage = ffi.typeof("struct BLImageCore")
 BLImageCore = BLImage
@@ -596,20 +562,7 @@ BLImage_mt = {
   end;
 
 
---[[
-BLResult __cdecl blImageAssignMove(BLImageCore* self, BLImageCore* other) ;
-BLResult __cdecl blImageAssignWeak(BLImageCore* self, const BLImageCore* other) ;
-BLResult __cdecl blImageAssignDeep(BLImageCore* self, const BLImageCore* other) ;
-BLResult __cdecl blImageCreate(BLImageCore* self, int w, int h, uint32_t format) ;
-BLResult __cdecl blImageCreateFromData(BLImageCore* self, int w, int h, uint32_t format, void* pixelData, intptr_t stride, BLDestroyImplFunc destroyFunc, void* destroyData) ;
-BLResult __cdecl blImageGetData(const BLImageCore* self, BLImageData* dataOut) ;
-BLResult __cdecl blImageMakeMutable(BLImageCore* self, BLImageData* dataOut) ;
-bool     __cdecl blImageEquals(const BLImageCore* a, const BLImageCore* b) ;
-BLResult __cdecl blImageScale(BLImageCore* dst, const BLImageCore* src, const BLSizeI* size, uint32_t filter, const BLImageScaleOptions* options) ;
-BLResult __cdecl blImageReadFromData(BLImageCore* self, const void* data, size_t size, const BLArrayCore* codecs) ;
-BLResult __cdecl blImageWriteToData(const BLImageCore* self, BLArrayCore* dst, const BLImageCodecCore* codec) ;
 
---]]
     __new = function(ct, ...)
       --print("BLImageCore.__new: ",...)
       local nargs = select('#', ...)
@@ -637,10 +590,12 @@ BLResult __cdecl blImageWriteToData(const BLImageCore* self, BLArrayCore* dst, c
           return false, bResult;
       end
 
-      --print("BLImageCore.__new, constructor: ", nargs, bResult)
       return obj
     end;
 
+    __tostring = function(self)
+      return string.format("BLImage(%d,%d)", self.impl.size.w, self.impl.size.h)
+    end;
 
     __index = {
         size = function(self)
@@ -693,9 +648,6 @@ BLResult __cdecl blImageWriteToData(const BLImageCore* self, BLArrayCore* dst, c
 --]]
     };
 
-    __tostring = function(self)
-      return string.format("BLImage(%d,%d)", self.impl.size.w, self.impl.size.h)
-    end;
 }
 ffi.metatype(BLImage, BLImage_mt)
 
@@ -762,18 +714,15 @@ local BLImageCodec_mt = {
 ffi.metatype(BLImageCodec, BLImageCodec_mt)
 
 --[[
---BLResult __cdecl blMatrix2DSetIdentity(BLMatrix2D* self) ;
---BLResult __cdecl blMatrix2DSetTranslation(BLMatrix2D* self, double x, double y) ;
---BLResult __cdecl blMatrix2DSetSkewing(BLMatrix2D* self, double x, double y) ;
---BLResult __cdecl blMatrix2DSetRotation(BLMatrix2D* self, double angle, double cx, double cy) ;
-BLResult __cdecl blMatrix2DApplyOp(BLMatrix2D* self, uint32_t opType, const void* opData) ;
---BLResult __cdecl blMatrix2DInvert(BLMatrix2D* dst, const BLMatrix2D* src) ;
---uint32_t __cdecl blMatrix2DGetType(const BLMatrix2D* self) ;
---BLResult __cdecl blMatrix2DMapPointDArray(const BLMatrix2D* self, BLPoint* dst, const BLPoint* src, size_t count) ;
+  BLMatrix2D
+
+  Represents 2D transforms
 --]]
 
 BLMatrix2D = ffi.typeof("struct BLMatrix2D")
 local BLMatrix2D_mt = {
+
+
     __tostring = function(self)
         local tbl = {}
         table.insert(tbl, string.format("%3.2f  %3.2f", self.m00, self.m01))
@@ -810,7 +759,7 @@ local BLMatrix2D_mt = {
 
         createRotation = function(self, angle, cx, cy)
           local m1 = BLMatrix2D()
-          blapi.blMatrix2DSetRotation(m1, angle, cx, cy)     -- 45 degrees
+          blapi.blMatrix2DSetRotation(m1, angle, cx, cy)
           return m1
         end;
 
@@ -821,12 +770,53 @@ local BLMatrix2D_mt = {
         end;
 
         -- Matrix operations
+        set = function(self, m00, m01, m10, m11, m20, m21)
+          self.m00 = m00;
+          self.m01 = m01;
+          self.m10 = m10;
+          self.m11 = m11;
+          self.m20 = m20;
+          self.m21 = m21;
+        end;
+
         applyOperation = function(self, opType, opData)
           local bResult = blapi.blMatrix2DApplyOp(self, opType, opData) ;
         end;
 
         getType = function(self)
           return blapi.blMatrix2DGetType(self) ;
+        end;
+
+        translate = function(self, tx, ty)
+          local bResult = self:applyOperation(C.BL_MATRIX2D_OP_TRANSLATE, BLPoint(tx,ty))
+        end;
+
+        postTranslate = function(self, tx, ty)
+          local bResult = self:applyOperation(C.BL_MATRIX2D_OP_POST_TRANSLATE, BLPoint(tx,ty))
+        end;
+
+        scale = function(self, sx, sy)
+          local bResult = self:applyOperation(C.BL_MATRIX2D_OP_SCALE, BLPoint(sx, sy))
+        end;
+        
+        postScale = function(self, sx, sy)
+          local bResult = self:applyOperation(C.BL_MATRIX2D_OP_POST_SCALE, BLPoint(sx, sy))
+        end;
+
+        rotate = function(self, rads)
+          local opData = ffi.new("double[1]", rads)
+          local bResult = self:applyOperation(C.BL_MATRIX2D_OP_ROTATE, opData)
+        end;
+
+        rotateAroundPoint = function(self, radians, x, y)
+        end;
+
+        concat = function(self, other)
+          return self:applyOperation(C.BL_MATRIX2D_OP_TRANSFORM, other);
+        end;
+
+        postConcat = function(self, other)
+          return self:applyOperation(C.BL_MATRIX2D_OP_POST_TRANSFORM, other);
         end;
 
         -- apply the current transformation to an array of points
@@ -854,90 +844,7 @@ local BLMatrix2D_mt = {
 ffi.metatype("struct BLMatrix2D", BLMatrix2D_mt)
 
 
---[[
-    BLPath
-]]
-
-BLPath = ffi.typeof("struct BLPathCore")
-
-local pathCommands = {
-  assignMove = blapi.blPathAssignMove  ;
-  addignWeak = blapi.blPathAssignWeak  ;
-  assignDeep = blapi.blPathAssignDeep  ;
-  equals = blapi.blPathEquals ;
-
-  -- meta commands
-  clear = blapi.blPathClear;
-  close = blapi.blPathClose ;
-  fitTo = blapi.blPathFitTo  ;
-  shrink = blapi.blPathShrink ;
-  reserve = blapi.blPathReserve ;
-  modifyOp = blapi.blPathModifyOp  ;
-  setVertexAt = blapi.blPathSetVertexAt  ;
-  translate = blapi.blPathTranslate  ;
-  transform = blapi.blPathTransform  ;
-  pathHitTest = blapi.blPathHitTest ;
-
-  -- Getting stuff
-getSize = blapi.blPathGetSize ;
-getCapacity = blapi.blPathGetCapacity ;
-getCommandData = blapi.blPathGetCommandData ;
-getVertexData = blapi.blPathGetVertexData ;
-getInfoFlags = blapi.blPathGetInfoFlags ;
-getControlBox = blapi.blPathGetControlBox ;
-getBoundingBox = blapi.blPathGetBoundingBox ;
-getFigureRange = blapi.blPathGetFigureRange ;
-getLastVertex = blapi.blPathGetLastVertex ;
-getClosestVertex = blapi.blPathGetClosestVertex ;
-
-  -- extending path
-arcTo = blapi.blPathArcTo  ;
-arcQuadrantTo = blapi.blPathArcQuadrantTo  ;
-cubicTo = blapi.blPathCubicTo  ;
-ellipticArcTo = blapi.blPathEllipticArcTo  ;
-moveTo = blapi.blPathMoveTo  ;
-lineTo = blapi.blPathLineTo  ;
-polyTo = blapi.blPathPolyTo  ;
-quadTo = blapi.blPathQuadTo  ;
-smoothQuadTo = blapi.blPathSmoothQuadTo  ;
-smoothCubicTo = blapi.blPathSmoothCubicTo  ;
-
-addGeometry = blapi.blPathAddGeometry  ;
-addBoxI = blapi.blPathAddBoxI  ;
-addBoxD = blapi.blPathAddBoxD  ;
-addRectI = blapi.blPathAddRectI  ;
-addRectD = blapi.blPathAddRectD  ;
-addPath = blapi.blPathAddPath  ;
-addTranslatedPath = blapi.blPathAddTranslatedPath  ;
-addTransformedPath = blapi.blPathAddTransformedPath  ;
-addReversedPath = blapi.blPathAddReversedPath  ;
-
-strokePath = blapi.blPathAddStrokedPath ;
-}
-local BLPath_mt = {
-    __gc = function(self)
-        local bResult = blapi.blPathReset(self);
-        return bResult == C.BL_SUCCESS or bResult
-    end;
-
-    __new = function(ct, ...)
-        local obj = ffi.new(ct);
-        local bResult = blapi.blPathInit(obj);
-        if bResult ~= C.BL_SUCCESS then
-          return false, "error with blPathInit: "..tostring(bResult)
-        end
-
-        return obj;
-    end;
-
-    __index = function(self, key)
-        local pcmd = pathCommands[key]
-        --print("Path.__index: ", self, key, pcmd)
-
-        return pcmd
-    end;
-}
-ffi.metatype(BLPath, BLPath_mt)
+require("blpath")
 
 --[[
     BLPattern
@@ -1012,10 +919,7 @@ ffi.metatype(BLRandom, {
 })
 
 
-
 BLContext = require("blcontext")
-
-
 
 
 --[[

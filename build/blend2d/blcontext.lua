@@ -29,36 +29,35 @@ local  BLContext = ffi.typeof("struct BLContextCore")
           local bResult = blapi.blContextReset(self) ;
         end;
     
-        __new = function(ct, ...)
-            local nargs = select("#", ...)
+        __new = function(ct, a, b)
             local obj = ffi.new(ct);
-    
-            if nargs == 0 then
+            if (not b) and (not a) then
+              -- zero arguments
               local bResult = blapi.blContextInit(obj)
               if bResult ~= C.BL_SUCCESS then
                 return nil, bResult
               end
-            elseif nargs == 1 then
-              local bResult = blapi.blContextInitAs(obj, select(1,...), nil) ;
+            elseif a and (not b) then
+              -- one argument, should be an image
+              local bResult = blapi.blContextInitAs(obj, a, nil) ;
               if bResult ~= C.BL_SUCCESS then
                 return nil, bResult
               end
-            elseif nargs == 2 then
+            elseif a and b then
               -- it could be two numbers indicating size
               -- or it could be an image and creation options
-              if ffi.typeof(select(1,...)) == BLImage then
-                local bResult = blapi.blContextInitAs(obj, select(1,...), select(2,...)) ;
-                if bResult ~= C.BL_SUCCESS then
-                  return nil, bResult
-                end
-              elseif type(select(1,...)) == "number" and type(select(2,...)) == "number" then
-                local img = BLImage(select(1, ...), select(2,...))
+              if type(a) == "number" and type(b) == "number" then
+                local img = BLImage(a, b)
                 local bResult = blapi.blContextInitAs(obj, img, nil)
                 if bResult ~= C.BL_SUCCESS then
                   return nil, bResult;
                 end
+              elseif ffi.typeof(a) == BLImage then
+                local bResult = blapi.blContextInitAs(obj, a, b) ;
+                if bResult ~= C.BL_SUCCESS then
+                  return nil, bResult
+                end
               end
-    
             end
     
             return obj;
@@ -310,6 +309,16 @@ local  BLContext = ffi.typeof("struct BLContextCore")
           --
           -- Stroke specifics
           --
+          setStrokeTransformOrder = function(self, transformOrder)
+            local bResult = self.impl.virt.setStrokeTransformOrder(self.impl, transformOrder)
+            
+            if bResult == C.BL_SUCCESS then
+              return true;
+            end
+    
+            return false, bResult;
+          end;
+
           setStrokeStartCap = function(self, strokeCap)
             local bResult = blapi.blContextSetStrokeCap(self, C.BL_STROKE_CAP_POSITION_START, strokeCap) ;
             if bResult == C.BL_SUCCESS then
@@ -403,7 +412,7 @@ local  BLContext = ffi.typeof("struct BLContextCore")
     
             return false, bResult;
           end;
-    
+
           clearRect = function(self, rect)
             local bResult = self.impl.virt.clearRectD(self.impl, rect);
             if bResult == C.BL_SUCCESS then
@@ -443,7 +452,7 @@ local  BLContext = ffi.typeof("struct BLContextCore")
           end;
     
           fillPathD = function(self, path)
-              local bReasult = blapi.blContextFillPathD(self, path) ;
+              local bResult = blapi.blContextFillPathD(self, path) ;
               if bResult == C.BL_SUCCESS then
                 return true;
               end

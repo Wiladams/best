@@ -4,7 +4,14 @@
 local TitleBar = require("TitleBar")
 
 
-local function app(params)
+function app()
+    local params = {
+        frame={
+            x=0, y=0,
+            width=640,height=480
+        }
+    }
+
     local win1 = WMCreateWindow(params)
     
 
@@ -24,5 +31,7 @@ local function app(params)
         yield();
     end
 end
+
+require("windowapp")
 
 return app

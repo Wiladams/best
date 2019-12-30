@@ -1,6 +1,12 @@
 local SpiroGraphic = require("SpiroGraphic")
 
-local function app(params)
+function app(params)
+    local params = {
+        frame={x=0, y=0,
+            width=640,height=480
+        }
+    }
+
     local win1 = WMCreateWindow(params)
     win1:setTitle("BEST spirograph")
     win1:setUseTitleBar(true)
@@ -15,5 +21,7 @@ local function app(params)
         yield();
     end
 end
+
+require("windowapp")
 
 return app

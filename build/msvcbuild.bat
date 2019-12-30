@@ -22,12 +22,14 @@
 @set LJDLLNAME=lua51.dll
 @set LJLIBNAME=bin/lua51.lib
 
+%LUAC% blend2d/blarray.lua blarray.obj
 %LUAC% blend2d/blcontext.lua blcontext.obj
 %LUAC% blend2d/blend2d_ffi.lua blend2d_ffi.obj
 %LUAC% blend2d/blend2d.lua blend2d.obj
 %LUAC% blend2d/blerror.lua blerror.obj
+%LUAC% blend2d/blpath.lua blpath.obj
 %LUAC% blend2d/enum.lua enum.obj
-@set BLEND2DLIB=blcontext.obj blend2d_ffi.obj blend2d.obj blerror.obj enum.obj
+@set BLEND2DLIB= blarray.obj blcontext.obj blend2d_ffi.obj blend2d.obj blerror.obj blpath.obj enum.obj
 
 
 @rem The best core library
@@ -40,7 +42,6 @@
 %LUAC% ../best/collections.lua collections.obj
 %LUAC% ../best/coloring.lua coloring.obj
 %LUAC% ../best/DrawingContext.lua DrawingContext.obj
-%LUAC% ../best/enum.lua enum.obj
 %LUAC% ../best/filesystem.lua filesystem.obj
 %LUAC% ../best/FontMonger.lua FontMonger.obj
 %LUAC% ../best/functor.lua functor.obj
@@ -51,7 +52,7 @@
 %LUAC% ../best/unicode_util.lua unicode_util.obj
 %LUAC% ../best/vkeys.lua vkeys.obj
 %LUAC% ../best/win32.lua win32.obj
-@set BESTLIB=BEST_system.obj BEST_uievents.obj BEST_uisignaling.obj BEST_win32.obj BLDIBSection.obj blerror.obj collections.obj coloring.obj DrawingContext.obj  enum.obj filesystem.obj FontMonger.obj functor.obj Gradient.obj maths.obj scheduler.obj spairs.obj unicode_util.obj vkeys.obj win32.obj
+@set BESTLIB=BEST_system.obj BEST_uievents.obj BEST_uisignaling.obj BEST_win32.obj BLDIBSection.obj blerror.obj collections.obj coloring.obj DrawingContext.obj filesystem.obj FontMonger.obj functor.obj Gradient.obj maths.obj scheduler.obj spairs.obj unicode_util.obj vkeys.obj win32.obj
 
 @rem The BEST GUI Library
 %LUAC% ../best/BView.lua BView.obj

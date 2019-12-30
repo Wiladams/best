@@ -1,7 +1,13 @@
 
 local keyboard = require("GPianoKeyboard")
 
-local function app(params)
+function app()
+    local params = {
+        frame={x=0, y=0,
+            width=640,height=320
+        }
+    }
+
     local win1 = WMCreateWindow(params)
     --win1:setUseTitleBar(true)
 
@@ -23,4 +29,7 @@ local function app(params)
     end
 end
 
+require("windowapp")
+
 return app
+
