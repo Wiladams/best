@@ -82,8 +82,8 @@ local function start(params)
 
     params.width = gScreenX;
     params.height = gScreenY-200;
-    params.title = params.title or "WinMan";
-    params.winxstyle = bor(C.WS_EX_LAYERED, C.WS_EX_TOPMOST, C.WS_EX_NOREDIRECTIONBITMAP);
+    params.title = params.title or "Desktopper";
+    params.winxstyle = bor(C.WS_EX_LAYERED, C.WS_EX_NOREDIRECTIONBITMAP);
     params.frameRate = params.frameRate or 30;
 
     run(BEST_win32, params)
